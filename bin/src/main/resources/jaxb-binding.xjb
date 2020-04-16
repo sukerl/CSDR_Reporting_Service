@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="https://www.w3.org/2001/XMLSchema" jaxb:extensionBindingPrefixes="xjc" version="2.0">
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0">
     <jaxb:bindings schemaLocation="schemas/head.003.001.01.xsd" node="/xsd:schema">
         <jaxb:schemaBindings>
             <jaxb:package name="li.bankfrick.informatik.reporting.csdr.xml.entities.head003"/>

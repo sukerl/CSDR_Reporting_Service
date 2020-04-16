@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="2.1" xmlns="http://java.sun.com/xml/ns/jaxb">
+  <!--
+
+Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.3.2 generiert 
+Siehe <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
+Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
+Generiert: 2020.04.16 um 05:01:06 PM CEST 
+
+  -->
+  <bindings scd="x-schema::tns" xmlns:tns="urn:iso:std:iso:20022:tech:xsd:auth.072.001.01">
+    <schemaBindings map="false">
+      <package name="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072"/>
+    </schemaBindings>
+    <bindings scd="~tns:Document">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.Document"/>
+    </bindings>
+    <bindings scd="~tns:ContactDetails4">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.ContactDetails4"/>
+    </bindings>
+    <bindings scd="~tns:InternalisationData1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.InternalisationData1"/>
+    </bindings>
+    <bindings scd="~tns:InternalisationData2">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.InternalisationData2"/>
+    </bindings>
+    <bindings scd="~tns:InternalisationDataRate1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.InternalisationDataRate1"/>
+    </bindings>
+    <bindings scd="~tns:InternalisationDataVolume1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.InternalisationDataVolume1"/>
+    </bindings>
+    <bindings scd="~tns:IssuerCSDIdentification1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.IssuerCSDIdentification1"/>
+    </bindings>
+    <bindings scd="~tns:IssuerCSDReport1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.IssuerCSDReport1"/>
+    </bindings>
+    <bindings scd="~tns:SettlementInternaliser1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliser1"/>
+    </bindings>
+    <bindings scd="~tns:SettlementInternaliserClientType1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliserClientType1"/>
+    </bindings>
+    <bindings scd="~tns:SettlementInternaliserFinancialInstrument1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliserFinancialInstrument1"/>
+    </bindings>
+    <bindings scd="~tns:SettlementInternaliserIdentification1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliserIdentification1"/>
+    </bindings>
+    <bindings scd="~tns:SettlementInternaliserReportHeader1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliserReportHeader1"/>
+    </bindings>
+    <bindings scd="~tns:SettlementInternaliserReportV01">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliserReportV01"/>
+    </bindings>
+    <bindings scd="~tns:SettlementInternaliserTransactionType1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliserTransactionType1"/>
+    </bindings>
+    <bindings scd="~tns:SupplementaryData1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SupplementaryData1"/>
+    </bindings>
+    <bindings scd="~tns:SupplementaryDataEnvelope1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SupplementaryDataEnvelope1"/>
+    </bindings>
+    <bindings scd="~tns:TransactionOperationType4Code">
+      <typesafeEnumClass ref="li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.TransactionOperationType4Code"/>
+    </bindings>
+  </bindings>
+  <bindings scd="x-schema::tns" xmlns:tns="urn:iso:std:iso:20022:tech:xsd:head.001.001.01">
+    <schemaBindings map="false">
+      <package name="li.bankfrick.informatik.reporting.csdr.xml.entities.head001"/>
+    </schemaBindings>
+    <bindings scd="~tns:BusinessApplicationHeaderV01">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.BusinessApplicationHeaderV01"/>
+    </bindings>
+    <bindings scd="~tns:BranchAndFinancialInstitutionIdentification5">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.BranchAndFinancialInstitutionIdentification5"/>
+    </bindings>
+    <bindings scd="~tns:BranchData2">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.BranchData2"/>
+    </bindings>
+    <bindings scd="~tns:BusinessApplicationHeader1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.BusinessApplicationHeader1"/>
+    </bindings>
+    <bindings scd="~tns:ClearingSystemIdentification2Choice">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.ClearingSystemIdentification2Choice"/>
+    </bindings>
+    <bindings scd="~tns:ClearingSystemMemberIdentification2">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.ClearingSystemMemberIdentification2"/>
+    </bindings>
+    <bindings scd="~tns:ContactDetails2">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.ContactDetails2"/>
+    </bindings>
+    <bindings scd="~tns:DateAndPlaceOfBirth">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.DateAndPlaceOfBirth"/>
+    </bindings>
+    <bindings scd="~tns:FinancialIdentificationSchemeName1Choice">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.FinancialIdentificationSchemeName1Choice"/>
+    </bindings>
+    <bindings scd="~tns:FinancialInstitutionIdentification8">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.FinancialInstitutionIdentification8"/>
+    </bindings>
+    <bindings scd="~tns:GenericFinancialIdentification1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.GenericFinancialIdentification1"/>
+    </bindings>
+    <bindings scd="~tns:GenericOrganisationIdentification1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.GenericOrganisationIdentification1"/>
+    </bindings>
+    <bindings scd="~tns:GenericPersonIdentification1">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.GenericPersonIdentification1"/>
+    </bindings>
+    <bindings scd="~tns:OrganisationIdentification7">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.OrganisationIdentification7"/>
+    </bindings>
+    <bindings scd="~tns:OrganisationIdentificationSchemeName1Choice">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.OrganisationIdentificationSchemeName1Choice"/>
+    </bindings>
+    <bindings scd="~tns:Party10Choice">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.Party10Choice"/>
+    </bindings>
+    <bindings scd="~tns:Party9Choice">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.Party9Choice"/>
+    </bindings>
+    <bindings scd="~tns:PartyIdentification42">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.PartyIdentification42"/>
+    </bindings>
+    <bindings scd="~tns:PersonIdentification5">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.PersonIdentification5"/>
+    </bindings>
+    <bindings scd="~tns:PersonIdentificationSchemeName1Choice">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.PersonIdentificationSchemeName1Choice"/>
+    </bindings>
+    <bindings scd="~tns:PostalAddress6">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.PostalAddress6"/>
+    </bindings>
+    <bindings scd="~tns:SignatureEnvelope">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.SignatureEnvelope"/>
+    </bindings>
+    <bindings scd="~tns:AddressType2Code">
+      <typesafeEnumClass ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.AddressType2Code"/>
+    </bindings>
+    <bindings scd="~tns:CopyDuplicate1Code">
+      <typesafeEnumClass ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.CopyDuplicate1Code"/>
+    </bindings>
+    <bindings scd="~tns:NamePrefix1Code">
+      <typesafeEnumClass ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head001.NamePrefix1Code"/>
+    </bindings>
+  </bindings>
+  <bindings scd="x-schema::tns" xmlns:tns="urn:iso:std:iso:20022:tech:xsd:head.003.001.01">
+    <schemaBindings map="false">
+      <package name="li.bankfrick.informatik.reporting.csdr.xml.entities.head003"/>
+    </schemaBindings>
+    <bindings scd="~tns:BusinessDataHeaderV01">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head003.BusinessDataHeaderV01"/>
+    </bindings>
+    <bindings scd="~tns:BusinessApplicationHeaderEnvelope">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head003.BusinessApplicationHeaderEnvelope"/>
+    </bindings>
+    <bindings scd="~tns:StrictPayload">
+      <class ref="li.bankfrick.informatik.reporting.csdr.xml.entities.head003.StrictPayload"/>
+    </bindings>
+  </bindings>
+</bindings>
+

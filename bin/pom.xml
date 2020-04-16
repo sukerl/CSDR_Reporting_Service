@@ -96,13 +96,8 @@
 							<xjbSources>
 								<xjbSource>src/main/resources/jaxb-binding.xjb</xjbSource>
 							</xjbSources>
-							<sources>
-								<source>src/main/resources/schemas/head.003.001.01.xsd</source>
-								<source>src/main/resources/schemas/head.001.001.01.xsd</source>
-								<source>src/main/resources/schemas/auth.072.001.01.xsd</source>
-							</sources>
-							<!--<outputDirectory>${basedir}/src/main/java</outputDirectory>-->
-							<clearOutputDir>true</clearOutputDir>
+							<outputDirectory>${basedir}/src/main/java</outputDirectory>
+							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
 				</executions>

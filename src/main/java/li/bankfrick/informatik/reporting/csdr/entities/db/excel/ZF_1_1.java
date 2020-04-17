@@ -1,4 +1,4 @@
-package li.bankfrick.informatik.reporting.csdr.excel.entities;
+package li.bankfrick.informatik.reporting.csdr.entities.db.excel;
 
 import java.math.BigDecimal;
 
@@ -10,16 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="ZF_1_4")
-public class ZF_1_4 {
+@Table(name="ZF_1_1")
+public class ZF_1_1 {
 			
 		@Id
 		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		@Column(name = "ZF_1_4_ID")
-		private Integer zf_1_4_ID;
-		
-		@Column(name = "AnlegerTyp")
-		private String anlegerTyp;
+		@Column(name = "ZF_1_1_ID")
+		private Integer zf_1_1_ID;
 		
 		@Column(name = "Gegenseite")
 		private Integer gegenseite;
@@ -42,17 +39,16 @@ public class ZF_1_4 {
 		@Column(name = "GegenwertInEUR")
 		private BigDecimal gegenwertInEUR;
 
-		public ZF_1_4() {
+		public ZF_1_1() {
 			super();
 			// TODO Auto-generated constructor stub
 		}
 
-		public ZF_1_4(Integer zf_1_4_ID, String anlegerTyp, Integer gegenseite, String bezeichnungGegenseite,
-				String tRC, String bezeichnungTRC, Integer anzahlTransaktionen, BigDecimal gegenwertInCHF,
+		public ZF_1_1(Integer zf_1_1_ID, Integer gegenseite, String bezeichnungGegenseite, String tRC,
+				String bezeichnungTRC, Integer anzahlTransaktionen, BigDecimal gegenwertInCHF,
 				BigDecimal gegenwertInEUR) {
 			super();
-			this.zf_1_4_ID = zf_1_4_ID;
-			this.anlegerTyp = anlegerTyp;
+			this.zf_1_1_ID = zf_1_1_ID;
 			this.gegenseite = gegenseite;
 			this.bezeichnungGegenseite = bezeichnungGegenseite;
 			TRC = tRC;
@@ -62,20 +58,12 @@ public class ZF_1_4 {
 			this.gegenwertInEUR = gegenwertInEUR;
 		}
 
-		public Integer getZf_1_4_ID() {
-			return zf_1_4_ID;
+		public Integer getZf_1_1_ID() {
+			return zf_1_1_ID;
 		}
 
-		public void setZf_1_4_ID(Integer zf_1_4_ID) {
-			this.zf_1_4_ID = zf_1_4_ID;
-		}
-
-		public String getAnlegerTyp() {
-			return anlegerTyp;
-		}
-
-		public void setAnlegerTyp(String anlegerTyp) {
-			this.anlegerTyp = anlegerTyp;
+		public void setZf_1_1_ID(Integer zf_1_1_ID) {
+			this.zf_1_1_ID = zf_1_1_ID;
 		}
 
 		public Integer getGegenseite() {
@@ -136,10 +124,9 @@ public class ZF_1_4 {
 
 		@Override
 		public String toString() {
-			return "ZF_1_4 [zf_1_4_ID=" + zf_1_4_ID + ", anlegerTyp=" + anlegerTyp + ", gegenseite=" + gegenseite
-					+ ", bezeichnungGegenseite=" + bezeichnungGegenseite + ", TRC=" + TRC + ", bezeichnungTRC="
-					+ bezeichnungTRC + ", anzahlTransaktionen=" + anzahlTransaktionen + ", gegenwertInCHF="
-					+ gegenwertInCHF + ", gegenwertInEUR=" + gegenwertInEUR + "]";
+			return "ZF_1_1 [zf_1_1_ID=" + zf_1_1_ID + ", gegenseite=" + gegenseite + ", bezeichnungGegenseite="
+					+ bezeichnungGegenseite + ", TRC=" + TRC + ", bezeichnungTRC=" + bezeichnungTRC
+					+ ", anzahlTransaktionen=" + anzahlTransaktionen + ", gegenwertInCHF=" + gegenwertInCHF
+					+ ", gegenwertInEUR=" + gegenwertInEUR + "]";
 		}
-
 }

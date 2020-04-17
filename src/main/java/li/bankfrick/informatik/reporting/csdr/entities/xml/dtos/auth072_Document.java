@@ -1,4 +1,4 @@
-package li.bankfrick.informatik.reporting.csdr.xml.entities.dtos;
+package li.bankfrick.informatik.reporting.csdr.entities.xml.dtos;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,14 +13,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.ContactDetails4;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.Document;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.ObjectFactory;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliser1;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliserIdentification1;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliserReportHeader1;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.SettlementInternaliserReportV01;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.auth072.TransactionOperationType4Code;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.Document;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.ObjectFactory;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInternaliser1;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInternaliserReportHeader1;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInternaliserReportV01;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.TransactionOperationType4Code;
 
 @Component
 public class auth072_Document {
@@ -99,23 +97,9 @@ public class auth072_Document {
 		
 		// Reportheader dem SettlementInternaliserReportV01 zuweisen
 		sttlmIntlrRpt.setRptHdr(rptHdr);
-		
-		// Settlement Internaliser generieren
-		SettlementInternaliser1 settlementInternaliser = objFactory.createSettlementInternaliser1();
-		SettlementInternaliserIdentification1 settlementInternaliserIdentification = objFactory.createSettlementInternaliserIdentification1();
-		ContactDetails4 responsiblePerson = objFactory.createContactDetails4();
-		responsiblePerson.setNm(RP_NAME);
-		responsiblePerson.setPhneNb(RP_PHONE);
-		responsiblePerson.setEmailAdr(RP_EMAIL);
-		responsiblePerson.setFctn(RP_FUNCTION);
-		
-		settlementInternaliserIdentification.setLEI(LEI);
-		settlementInternaliserIdentification.setRspnsblPrsn(responsiblePerson);
-		settlementInternaliserIdentification.setCtry(FROM_COUNTRY_CODE);
-		
-		settlementInternaliser.setId(settlementInternaliserIdentification);
-		
-		// Settlement Internaliser dem SettlementInternaliserReportV01 zuweisen
+
+		// Settlement Internaliser generieren und dem SettlementInternaliserReportV01 zuweisen
+		SettlementInternaliser1 settlementInternaliser = auth072_SttlmIntlr.createSettlementInternaliser();
 		sttlmIntlrRpt.setSttlmIntlr(settlementInternaliser);
 		
 		// SettlementInternaliserReportV01 dem Document zuweisen

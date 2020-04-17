@@ -1,4 +1,4 @@
-package li.bankfrick.informatik.reporting.csdr.excel.entities;
+package li.bankfrick.informatik.reporting.csdr.entities.db.excel;
 
 import java.math.BigDecimal;
 

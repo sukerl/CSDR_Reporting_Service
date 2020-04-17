@@ -17,12 +17,12 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import li.bankfrick.informatik.reporting.csdr.excel.entities.Details_1_1;
-import li.bankfrick.informatik.reporting.csdr.excel.entities.Details_1_2;
-import li.bankfrick.informatik.reporting.csdr.excel.entities.ZF_1_1;
-import li.bankfrick.informatik.reporting.csdr.excel.entities.ZF_1_3;
-import li.bankfrick.informatik.reporting.csdr.excel.entities.ZF_1_4;
-import li.bankfrick.informatik.reporting.csdr.excel.entities.ZF_1_5;
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.Details_1_1;
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.Details_1_2;
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_1;
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_3;
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_4;
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_5;
 import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_1_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_2_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_1_Repository;
@@ -196,6 +196,8 @@ public class ExcelToDbLoader {
 				DETAILS_1_1_REPOSITORY.save(details_1_1);				
 			}
 			
+			workbook.close();
+			
 			logger.debug("Anzahl " +PATTERN_1_1 +" Detail Datensätze in DB: " +DETAILS_1_1_REPOSITORY.count());
 
 		} catch (Exception e) {
@@ -260,6 +262,8 @@ public class ExcelToDbLoader {
 				DETAILS_1_2_REPOSITORY.save(details_1_2);				
 			}
 			
+			workbook.close();
+			
 			logger.debug("Anzahl " +PATTERN_1_2 +" Detail Datensätze in DB: " +DETAILS_1_2_REPOSITORY.count());
 
 		} catch (Exception e) {
@@ -313,6 +317,8 @@ public class ExcelToDbLoader {
 				ZF_1_1_REPOSITORY.save(zf_1_1);				
 			}
 			
+			workbook.close();
+			
 			logger.debug("Anzahl " +PATTERN_1_1 +" ZF Datensätze in DB: " +ZF_1_1_REPOSITORY.count());
 
 		} catch (Exception e) {
@@ -365,6 +371,8 @@ public class ExcelToDbLoader {
 				
 				ZF_1_3_REPOSITORY.save(zf_1_3);				
 			}
+			
+			workbook.close();
 			
 			logger.debug("Anzahl " +PATTERN_1_3 +" ZF Datensätze in DB: " +ZF_1_3_REPOSITORY.count());
 
@@ -420,6 +428,8 @@ public class ExcelToDbLoader {
 				
 				ZF_1_4_REPOSITORY.save(zf_1_4);				
 			}
+			
+			workbook.close();
 			
 			List<ZF_1_4> investorsByType = ZF_1_4_REPOSITORY.findByAnlegerTyp(anlegerTyp);
 			
@@ -478,6 +488,8 @@ public class ExcelToDbLoader {
 				ZF_1_4_REPOSITORY.save(zf_1_4);				
 			}
 			
+			workbook.close();
+			
 			List<ZF_1_4> investorsByType = ZF_1_4_REPOSITORY.findByAnlegerTyp(anlegerTyp);
 			
 			logger.debug("Anzahl " +PATTERN_1_4 +" ZF Datensätze vom Typ " +anlegerTyp +" in DB: " +investorsByType.size());
@@ -529,6 +541,8 @@ public class ExcelToDbLoader {
 			zf_1_5_pos.setUebertragInEUR(uebertragPosEUR.setScale(2, RoundingMode.HALF_UP));
 			
 			ZF_1_5_REPOSITORY.save(zf_1_5_pos);
+			
+			workbook.close();
 			
 			logger.debug("Anzahl " +PATTERN_1_5 +" ZF Datensätze in DB: " +ZF_1_5_REPOSITORY.count());
 

@@ -11,9 +11,9 @@ import javax.xml.bind.Marshaller;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import li.bankfrick.informatik.reporting.csdr.entities.xml.dtos.head003_BizData;
 import li.bankfrick.informatik.reporting.csdr.services.ExcelToDbLoader;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.dtos.head003_BizData;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head003.BusinessDataHeaderV01;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head003.BusinessDataHeaderV01;
 
 @SpringBootApplication
 public class CsdrReportingServiceApplication {
@@ -30,7 +30,7 @@ public class CsdrReportingServiceApplication {
 		try {
 			// Create JAXB Context
 			JAXBContext jaxbContext = JAXBContext.newInstance(
-					"li.bankfrick.informatik.reporting.csdr.xml.entities.head003:li.bankfrick.informatik.reporting.csdr.xml.entities.head001:li.bankfrick.informatik.reporting.csdr.xml.entities.auth072");
+					"li.bankfrick.informatik.reporting.csdr.entities.xml.head003:li.bankfrick.informatik.reporting.csdr.entities.xml.head001:li.bankfrick.informatik.reporting.csdr.entities.xml.auth072");
 
 			// Create Marshaller
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

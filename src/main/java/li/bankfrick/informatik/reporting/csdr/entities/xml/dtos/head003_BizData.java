@@ -1,13 +1,13 @@
-package li.bankfrick.informatik.reporting.csdr.xml.entities.dtos;
+package li.bankfrick.informatik.reporting.csdr.entities.xml.dtos;
 
 import java.util.Calendar;
 
 import javax.xml.bind.JAXBElement;
 
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head003.BusinessApplicationHeaderEnvelope;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head003.BusinessDataHeaderV01;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head003.ObjectFactory;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head003.StrictPayload;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head003.BusinessApplicationHeaderEnvelope;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head003.BusinessDataHeaderV01;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head003.ObjectFactory;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head003.StrictPayload;
 
 public class head003_BizData {
 

@@ -1,4 +1,4 @@
-package li.bankfrick.informatik.reporting.csdr.xml.entities.dtos;
+package li.bankfrick.informatik.reporting.csdr.entities.xml.dtos;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,13 +13,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head001.BusinessApplicationHeaderV01;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head001.GenericOrganisationIdentification1;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head001.ObjectFactory;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head001.OrganisationIdentification7;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head001.Party10Choice;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head001.Party9Choice;
-import li.bankfrick.informatik.reporting.csdr.xml.entities.head001.PartyIdentification42;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.BusinessApplicationHeaderV01;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.GenericOrganisationIdentification1;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.ObjectFactory;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.OrganisationIdentification7;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.Party10Choice;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.Party9Choice;
+import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.PartyIdentification42;
 
 @Component
 public class head001_AppHdr {

@@ -1,4 +1,4 @@
-package li.bankfrick.informatik.reporting.csdr.excel.entities;
+package li.bankfrick.informatik.reporting.csdr.entities.db.excel;
 
 import java.math.BigDecimal;
 
@@ -10,13 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Details_1_1")
-public class Details_1_1 {
+@Table(name="Details_1_2")
+public class Details_1_2 {
 			
 		@Id
 		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		@Column(name = "Detail_1_1_ID")
-		private Integer detail_1_1_ID;
+		@Column(name = "Detail_1_2_ID")
+		private Integer detail_1_2_ID;
 		
 		@Column(name = "Gegenseite")
 		private String gegenseite;
@@ -66,17 +66,17 @@ public class Details_1_1 {
 		@Column(name = "BetragInEUR")
 		private BigDecimal betragInEUR;
 
-		public Details_1_1() {
+		public Details_1_2() {
 			super();
 			// TODO Auto-generated constructor stub
 		}
 
-		public Details_1_1(Integer detail_1_1_ID, String gegenseite, String bezeichnungGegenseite, String tRC,
+		public Details_1_2(Integer detail_1_2_ID, String gegenseite, String bezeichnungGegenseite, String tRC,
 				String bezeichnungTRC, String depotstelle, String bezeichnungDepotstelle, String lEI,
 				Integer transaktion, String iSINland, String valor, String kurzbezeichnung, Integer titelart,
 				String liefercode, String systemdatum, BigDecimal betragInCHF, BigDecimal betragInEUR) {
 			super();
-			this.detail_1_1_ID = detail_1_1_ID;
+			this.detail_1_2_ID = detail_1_2_ID;
 			this.gegenseite = gegenseite;
 			this.bezeichnungGegenseite = bezeichnungGegenseite;
 			TRC = tRC;
@@ -95,12 +95,12 @@ public class Details_1_1 {
 			this.betragInEUR = betragInEUR;
 		}
 
-		public Integer getDetail_1_1_ID() {
-			return detail_1_1_ID;
+		public Integer getDetail_1_2_ID() {
+			return detail_1_2_ID;
 		}
 
-		public void setDetail_1_1_ID(Integer detail_1_1_ID) {
-			this.detail_1_1_ID = detail_1_1_ID;
+		public void setDetail_1_2_ID(Integer detail_1_2_ID) {
+			this.detail_1_2_ID = detail_1_2_ID;
 		}
 
 		public String getGegenseite() {
@@ -233,7 +233,7 @@ public class Details_1_1 {
 
 		@Override
 		public String toString() {
-			return "Details_1_1 [detail_1_1_ID=" + detail_1_1_ID + ", gegenseite=" + gegenseite
+			return "Details_1_2 [detail_1_2_ID=" + detail_1_2_ID + ", gegenseite=" + gegenseite
 					+ ", bezeichnungGegenseite=" + bezeichnungGegenseite + ", TRC=" + TRC + ", bezeichnungTRC="
 					+ bezeichnungTRC + ", depotstelle=" + depotstelle + ", bezeichnungDepotstelle="
 					+ bezeichnungDepotstelle + ", LEI=" + LEI + ", transaktion=" + transaktion + ", ISINland="

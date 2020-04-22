@@ -31,9 +31,9 @@ import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_4_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_5_Repository;
 
 @Service
-public class ExcelToDbLoader {
+public class ExcelToDbLoaderService {
 
-	private static final Logger logger = LogManager.getLogger(ExcelToDbLoader.class);
+	private static final Logger logger = LogManager.getLogger(ExcelToDbLoaderService.class);
 
 	private static Details_1_1_Repository DETAILS_1_1_REPOSITORY;
 	private static Details_1_2_Repository DETAILS_1_2_REPOSITORY;	
@@ -42,13 +42,13 @@ public class ExcelToDbLoader {
 	private static ZF_1_4_Repository ZF_1_4_REPOSITORY;
 	private static ZF_1_5_Repository ZF_1_5_REPOSITORY;
 
-	public ExcelToDbLoader(Details_1_1_Repository DETAILS_1_1_REPOSITORY, Details_1_2_Repository DETAILS_1_2_REPOSITORY, ZF_1_1_Repository ZF_1_1_REPOSITORY, ZF_1_3_Repository ZF_1_3_REPOSITORY, ZF_1_4_Repository ZF_1_4_REPOSITORY, ZF_1_5_Repository ZF_1_5_REPOSITORY) {
-		ExcelToDbLoader.DETAILS_1_1_REPOSITORY = DETAILS_1_1_REPOSITORY;
-		ExcelToDbLoader.DETAILS_1_2_REPOSITORY = DETAILS_1_2_REPOSITORY;
-		ExcelToDbLoader.ZF_1_1_REPOSITORY = ZF_1_1_REPOSITORY;
-		ExcelToDbLoader.ZF_1_3_REPOSITORY = ZF_1_3_REPOSITORY;
-		ExcelToDbLoader.ZF_1_4_REPOSITORY = ZF_1_4_REPOSITORY;
-		ExcelToDbLoader.ZF_1_5_REPOSITORY = ZF_1_5_REPOSITORY;
+	public ExcelToDbLoaderService(Details_1_1_Repository DETAILS_1_1_REPOSITORY, Details_1_2_Repository DETAILS_1_2_REPOSITORY, ZF_1_1_Repository ZF_1_1_REPOSITORY, ZF_1_3_Repository ZF_1_3_REPOSITORY, ZF_1_4_Repository ZF_1_4_REPOSITORY, ZF_1_5_Repository ZF_1_5_REPOSITORY) {
+		ExcelToDbLoaderService.DETAILS_1_1_REPOSITORY = DETAILS_1_1_REPOSITORY;
+		ExcelToDbLoaderService.DETAILS_1_2_REPOSITORY = DETAILS_1_2_REPOSITORY;
+		ExcelToDbLoaderService.ZF_1_1_REPOSITORY = ZF_1_1_REPOSITORY;
+		ExcelToDbLoaderService.ZF_1_3_REPOSITORY = ZF_1_3_REPOSITORY;
+		ExcelToDbLoaderService.ZF_1_4_REPOSITORY = ZF_1_4_REPOSITORY;
+		ExcelToDbLoaderService.ZF_1_5_REPOSITORY = ZF_1_5_REPOSITORY;
 	}
 
 	private static String SOURCE_FOLDER;
@@ -113,14 +113,14 @@ public class ExcelToDbLoader {
 	
 	private static String ZF_SHEET_1_4_PROF;
 	@Value("${excel.pattern.1.4.file.zf.prof.sheet}")
-	public void setZF_1_4_prof(String zf_1_4_prof) {
-		ZF_SHEET_1_4_PROF = zf_1_4_prof;
+	public void setZF_1_4_Prfssnl(String zf_1_4_Prfssnl) {
+		ZF_SHEET_1_4_PROF = zf_1_4_Prfssnl;
 	}
 	
 	private static String ZF_SHEET_1_4_KLEIN;
 	@Value("${excel.pattern.1.4.file.zf.klein.sheet}")
-	public void setZF_1_4_klein(String zf_1_4_klein) {
-		ZF_SHEET_1_4_KLEIN = zf_1_4_klein;
+	public void setZF_1_4_Rtl(String zf_1_4_Rtl) {
+		ZF_SHEET_1_4_KLEIN = zf_1_4_Rtl;
 	}
 	
 	private static String ZF_SHEET_1_5;
@@ -135,8 +135,8 @@ public class ExcelToDbLoader {
 		load_Details_1_2();
 		load_ZF_1_1();
 		load_ZF_1_3();
-		load_ZF_1_4_prof();
-		load_ZF_1_4_klein();
+		load_ZF_1_4_Prfssnl();
+		load_ZF_1_4_Rtl();
 		load_ZF_1_5();
 	}
 
@@ -382,11 +382,11 @@ public class ExcelToDbLoader {
 		}
 	}
 	
-	private static void load_ZF_1_4_prof() {
+	private static void load_ZF_1_4_Prfssnl() {
 
 		Workbook workbook;
 		int startingRow = 2;
-		String anlegerTyp = "PROF";
+		String anlegerTyp = "Prfssnl";
 
 		File[] files = findFilesForId(PATTERN_1_4);
 
@@ -441,11 +441,11 @@ public class ExcelToDbLoader {
 		}
 	}
 	
-	private static void load_ZF_1_4_klein() {
+	private static void load_ZF_1_4_Rtl() {
 
 		Workbook workbook;
 		int startingRow = 2;
-		String anlegerTyp = "KLEIN";
+		String anlegerTyp = "Rtl";
 
 		File[] files = findFilesForId(PATTERN_1_4);
 
@@ -541,6 +541,32 @@ public class ExcelToDbLoader {
 			zf_1_5_pos.setUebertragInEUR(uebertragPosEUR.setScale(2, RoundingMode.HALF_UP));
 			
 			ZF_1_5_REPOSITORY.save(zf_1_5_pos);
+			
+			Row barOutRow = sheet.getRow(9);
+			ZF_1_5 zf_1_5_barout = new ZF_1_5();
+			
+			zf_1_5_barout.setUebertragsArt("barbezuege");
+			BigDecimal anzahlBarbezuegeTransaktionen = new BigDecimal((barOutRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
+			zf_1_5_barout.setAnzahlTransaktionen(anzahlBarbezuegeTransaktionen.intValue());
+			BigDecimal BarbezuegeCHF = new BigDecimal((barOutRow.getCell(1)).getNumericCellValue(), MathContext.DECIMAL64);
+			zf_1_5_barout.setUebertragInCHF(BarbezuegeCHF.setScale(2, RoundingMode.HALF_UP));
+			BigDecimal BarbezuegeEUR = new BigDecimal((barOutRow.getCell(2)).getNumericCellValue(), MathContext.DECIMAL64);
+			zf_1_5_barout.setUebertragInEUR(BarbezuegeEUR.setScale(2, RoundingMode.HALF_UP));
+			
+			ZF_1_5_REPOSITORY.save(zf_1_5_barout);
+			
+			Row barInRow = sheet.getRow(13);
+			ZF_1_5 zf_1_5_barin = new ZF_1_5();
+			
+			zf_1_5_barin.setUebertragsArt("bareinzahlungen");
+			BigDecimal anzahlBareinzahungenTransaktionen = new BigDecimal((barInRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
+			zf_1_5_barin.setAnzahlTransaktionen(anzahlBareinzahungenTransaktionen.intValue());
+			BigDecimal BareinzahungenCHF = new BigDecimal((barInRow.getCell(1)).getNumericCellValue(), MathContext.DECIMAL64);
+			zf_1_5_barin.setUebertragInCHF(BareinzahungenCHF.setScale(2, RoundingMode.HALF_UP));
+			BigDecimal BareinzahungenEUR = new BigDecimal((barInRow.getCell(2)).getNumericCellValue(), MathContext.DECIMAL64);
+			zf_1_5_barin.setUebertragInEUR(BareinzahungenEUR.setScale(2, RoundingMode.HALF_UP));
+			
+			ZF_1_5_REPOSITORY.save(zf_1_5_barin);
 			
 			workbook.close();
 			

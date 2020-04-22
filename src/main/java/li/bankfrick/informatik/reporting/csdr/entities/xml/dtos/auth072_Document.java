@@ -10,6 +10,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,48 +25,14 @@ import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.TransactionOp
 @Component
 public class auth072_Document {
 
+	private static final Logger logger = LogManager.getLogger(auth072_Document.class);
+	
 	private static ObjectFactory objFactory = new ObjectFactory();
-	
-	private static String FROM_COUNTRY_CODE;
-	@Value("${global.reporting.country}")
-	public void setFromCountryCode(String fromCountryCode) {
-		FROM_COUNTRY_CODE = fromCountryCode;
-    }
-	
-	private static String LEI;
-	@Value("${global.bank.frick.lei}")
-	public void setLei(String lei) {
-		LEI = lei;
-    }
-	
+
 	private static String REPORT_CURRENCY;
 	@Value("${auth.072.rpthdr.currency}")
 	public void setReportCurrency(String reportCurrency) {
 		REPORT_CURRENCY = reportCurrency;
-    }
-	
-	private static String RP_NAME;
-	@Value("${auth.072.responsible.person.name}")
-	public void setRpName(String rpName) {
-		RP_NAME = rpName;
-    }
-	
-	private static String RP_PHONE;
-	@Value("${auth.072.responsible.person.phone}")
-	public void setRpPhone(String rpPhone) {
-		RP_PHONE = rpPhone;
-    }
-	
-	private static String RP_EMAIL;
-	@Value("${auth.072.responsible.person.email}")
-	public void setRpEmail(String rpEmail) {
-		RP_EMAIL = rpEmail;
-    }
-	
-	private static String RP_FUNCTION;
-	@Value("${auth.072.responsible.person.function}")
-	public void setRpFunction(String rpFunction) {
-		RP_FUNCTION = rpFunction;
     }
 	
 	private static String CREDTTM_DATE_FORMAT;
@@ -80,14 +48,18 @@ public class auth072_Document {
     }
 
 	public static JAXBElement<Document> createDocument(Calendar cal) {
+		
+		logger.debug("auth072 : Document generieren.");
 
 		// Document-Element erstellen und dem Payload-Element zuweisen. 
 		Document document = objFactory.createDocument();
 		JAXBElement<Document> pyld = objFactory.createDocument(document);
 
+		logger.debug("auth072 : Document->SttlmIntlrRpt generieren.");
 		// SettlementInternaliserReportV01 anlegen
 		SettlementInternaliserReportV01 sttlmIntlrRpt = objFactory.createSettlementInternaliserReportV01();
 		
+		logger.debug("auth072 : Document->SttlmIntlrRpt->RptHdr generieren.");
 		// Report Header generieren
 		SettlementInternaliserReportHeader1 rptHdr = objFactory.createSettlementInternaliserReportHeader1();
 		rptHdr.setCreDtTm(createCreDtTm(cal));
@@ -97,10 +69,14 @@ public class auth072_Document {
 		
 		// Reportheader dem SettlementInternaliserReportV01 zuweisen
 		sttlmIntlrRpt.setRptHdr(rptHdr);
+		logger.debug("auth072 : Document->SttlmIntlrRpt->RptHdr generiert.");
 
 		// Settlement Internaliser generieren und dem SettlementInternaliserReportV01 zuweisen
 		SettlementInternaliser1 settlementInternaliser = auth072_SttlmIntlr.createSettlementInternaliser();
 		sttlmIntlrRpt.setSttlmIntlr(settlementInternaliser);
+		
+		// Liste der IssuerCSDReports generieren und dem SettlementInternaliserReportV01 zuweisen
+		sttlmIntlrRpt.getIssrCSD().addAll(auth072_IssrCSDs.createIssuerCSDReports());
 		
 		// SettlementInternaliserReportV01 dem Document zuweisen
 		document.setSttlmIntlrRpt(sttlmIntlrRpt);

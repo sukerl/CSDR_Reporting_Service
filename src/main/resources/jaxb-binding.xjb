@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="https://www.w3.org/2001/XMLSchema" jaxb:extensionBindingPrefixes="xjc" version="2.0">
-    <jaxb:bindings schemaLocation="schemas/head.003.001.01.xsd" node="/xsd:schema">
-        <jaxb:schemaBindings>
-            <jaxb:package name="li.bankfrick.informatik.reporting.csdr.entities.xml.head003"/>
-        </jaxb:schemaBindings>
-    </jaxb:bindings>
-    <jaxb:bindings schemaLocation="schemas/head.001.001.01.xsd" node="/xsd:schema">
-        <jaxb:schemaBindings>
-            <jaxb:package name="li.bankfrick.informatik.reporting.csdr.entities.xml.head001"/>
-        </jaxb:schemaBindings>
-    </jaxb:bindings>
-    <jaxb:bindings schemaLocation="schemas/auth.072.001.01.xsd" node="/xsd:schema">
-        <jaxb:schemaBindings>
-            <jaxb:package name="li.bankfrick.informatik.reporting.csdr.entities.xml.auth072"/>
-        </jaxb:schemaBindings>
-    </jaxb:bindings>
-</jaxb:bindings>
+<jxb:bindings xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+              xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jxb:version="2.1" jxb:extensionBindingPrefixes="xjc">
+    <jxb:bindings schemaLocation="schemas/head.003.001.01.xsd" node="/xsd:schema">
+        <jxb:schemaBindings>
+            <jxb:package name="li.bankfrick.informatik.reporting.csdr.entities.xml.head003"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+    <jxb:bindings schemaLocation="schemas/head.001.001.01.xsd" node="/xsd:schema">
+        <jxb:schemaBindings>
+            <jxb:package name="li.bankfrick.informatik.reporting.csdr.entities.xml.head001"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+    <jxb:bindings schemaLocation="schemas/auth.072.001.01.xsd" node="/xsd:schema">
+        <jxb:schemaBindings>
+            <jxb:package name="li.bankfrick.informatik.reporting.csdr.entities.xml.auth072"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+</jxb:bindings>

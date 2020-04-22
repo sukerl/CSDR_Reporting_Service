@@ -2,8 +2,6 @@ package li.bankfrick.informatik.reporting.csdr.entities.dtos;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Entity;
-
 public class VolValPair {
 	
 	public BigDecimal volume;
@@ -12,6 +10,12 @@ public class VolValPair {
 	public VolValPair() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+	
+	public VolValPair(long volume, BigDecimal value) {
+		super();
+		this.volume = new BigDecimal(volume);
+		this.value = value;
 	}
 	
 	public VolValPair(Integer volume, BigDecimal value) {

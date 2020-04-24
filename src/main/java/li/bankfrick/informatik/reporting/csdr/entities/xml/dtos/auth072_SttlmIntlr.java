@@ -11,8 +11,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import li.bankfrick.informatik.reporting.csdr.entities.db.mapping.FinInstrm_Mapping;
-import li.bankfrick.informatik.reporting.csdr.entities.db.mapping.TxTp_Mapping;
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.FinInstrm_Mapping;
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.TxTp_Mapping;
 import li.bankfrick.informatik.reporting.csdr.entities.dtos.VolValPair;
 import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.ContactDetails4;
 import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.InternalisationData1;

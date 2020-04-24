@@ -17,12 +17,14 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.CSDRReportingProperty;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.Details_1_1;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.Details_1_2;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_1;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_3;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_4;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_5;
+import li.bankfrick.informatik.reporting.csdr.repositories.CSDRReportingProperty_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_1_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_2_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_1_Repository;
@@ -35,6 +37,7 @@ public class ExcelToDbLoaderService {
 
 	private static final Logger logger = LogManager.getLogger(ExcelToDbLoaderService.class);
 
+	private static CSDRReportingProperty_Repository PROPERTIES_REPOSITORY;
 	private static Details_1_1_Repository DETAILS_1_1_REPOSITORY;
 	private static Details_1_2_Repository DETAILS_1_2_REPOSITORY;	
 	private static ZF_1_1_Repository ZF_1_1_REPOSITORY;
@@ -42,7 +45,8 @@ public class ExcelToDbLoaderService {
 	private static ZF_1_4_Repository ZF_1_4_REPOSITORY;
 	private static ZF_1_5_Repository ZF_1_5_REPOSITORY;
 
-	public ExcelToDbLoaderService(Details_1_1_Repository DETAILS_1_1_REPOSITORY, Details_1_2_Repository DETAILS_1_2_REPOSITORY, ZF_1_1_Repository ZF_1_1_REPOSITORY, ZF_1_3_Repository ZF_1_3_REPOSITORY, ZF_1_4_Repository ZF_1_4_REPOSITORY, ZF_1_5_Repository ZF_1_5_REPOSITORY) {
+	public ExcelToDbLoaderService(CSDRReportingProperty_Repository PROPERTIES_REPOSITORY, Details_1_1_Repository DETAILS_1_1_REPOSITORY, Details_1_2_Repository DETAILS_1_2_REPOSITORY, ZF_1_1_Repository ZF_1_1_REPOSITORY, ZF_1_3_Repository ZF_1_3_REPOSITORY, ZF_1_4_Repository ZF_1_4_REPOSITORY, ZF_1_5_Repository ZF_1_5_REPOSITORY) {
+		ExcelToDbLoaderService.PROPERTIES_REPOSITORY = PROPERTIES_REPOSITORY;
 		ExcelToDbLoaderService.DETAILS_1_1_REPOSITORY = DETAILS_1_1_REPOSITORY;
 		ExcelToDbLoaderService.DETAILS_1_2_REPOSITORY = DETAILS_1_2_REPOSITORY;
 		ExcelToDbLoaderService.ZF_1_1_REPOSITORY = ZF_1_1_REPOSITORY;
@@ -129,8 +133,9 @@ public class ExcelToDbLoaderService {
 		ZF_SHEET_1_5 = zf_1_5;
 	}
 
-	public static void readExcelFiles() {
+	public static void readExcelFiles(File propertyFile) {
 
+		load_Properties(propertyFile);
 		load_Details_1_1();
 		load_Details_1_2();
 		load_ZF_1_1();
@@ -138,6 +143,45 @@ public class ExcelToDbLoaderService {
 		load_ZF_1_4_Prfssnl();
 		load_ZF_1_4_Rtl();
 		load_ZF_1_5();
+	}
+	
+	private static void load_Properties(File propertyFile) {
+
+		Workbook workbook;
+		int startingRow = 2;
+		
+		try {
+		workbook = WorkbookFactory.create(propertyFile);
+		Sheet sheet = workbook.getSheet("Properties");
+		
+		// Schleife über alle Reihen in Excel-Sheet
+					Iterator<Row> rows = sheet.rowIterator();
+					while (rows.hasNext ())	{
+						
+						Row currentRow = rows.next();
+
+						// Die ersten X-Reihen auslassen
+						if(currentRow.getRowNum()<startingRow-1) {
+							continue;
+						}
+						
+						CSDRReportingProperty CSDRReportingProperty = new CSDRReportingProperty();
+						
+						CSDRReportingProperty.setKey(currentRow.getCell(0).getStringCellValue());
+						CSDRReportingProperty.setValue(currentRow.getCell(1).getStringCellValue());
+						
+						PROPERTIES_REPOSITORY.save(CSDRReportingProperty);				
+					}
+					
+					workbook.close();
+					
+					logger.debug("Anzahl Properties in DB: " +PROPERTIES_REPOSITORY.count());
+		
+		} catch (Exception e) {
+			logger.error(e);
+			System.exit(1);
+		}
+		
 	}
 
 	private static void load_Details_1_1() {

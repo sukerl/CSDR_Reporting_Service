@@ -1,4 +1,4 @@
-package li.bankfrick.informatik.reporting.csdr.entities.db.mapping;
+package li.bankfrick.informatik.reporting.csdr.entities.db.excel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

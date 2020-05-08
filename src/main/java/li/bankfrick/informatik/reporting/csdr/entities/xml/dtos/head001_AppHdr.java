@@ -1,6 +1,7 @@
 package li.bankfrick.informatik.reporting.csdr.entities.xml.dtos;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +21,7 @@ import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.OrganisationI
 import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.Party10Choice;
 import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.Party9Choice;
 import li.bankfrick.informatik.reporting.csdr.entities.xml.head001.PartyIdentification42;
+import li.bankfrick.informatik.reporting.csdr.services.XmlWriterService;
 
 @Component
 public class head001_AppHdr {
@@ -28,43 +30,55 @@ public class head001_AppHdr {
 
 	// Variablen für BizMsgIdr
 	private static String FROM_COUNTRY_CODE;
-	@Value("${global.reporting.country}")
+	@Value("${generic.reporting.country}")
 	public void setFromCountryCode(String fromCountryCode) {
 		FROM_COUNTRY_CODE = fromCountryCode;
     }
 	
 	private static String TO_COUNTRY_CODE;
-	@Value("${head.001.apphdr.to.country}")
+	@Value("${generic.receiving.country}")
 	public void setToCountryCode(String toCountryCode) {
 		TO_COUNTRY_CODE = toCountryCode;
     }
 
 	private static String LEI;
-	@Value("${global.bank.frick.lei}")
+	@Value("${generic.bank.frick.lei}")
 	public void setLei(String lei) {
 		LEI = lei;
     }
 	
 	private static String LAUFNUMMER;
-	@Value("${head.001.apphdr.laufnummer}")
+	@Value("${generic.laufnummer}")
 	public void setLaufnummer(String laufnummer) {
 		LAUFNUMMER = laufnummer;
     }
 	
 	// Variable für MsgDefIdr
 	private static String MSG_DEF_IDR;
-	@Value("${head.001.apphdr.msgdefidr}")
+	@Value("${technical.xml.head.001.apphdr.msgdefidr}")
 	public void setMsgDefIdr(String msgDefIdr) {
 		MSG_DEF_IDR = msgDefIdr;
     }
 	
 	private static String CREDT_DATE_FORMAT;
-	@Value("${head.001.apphdr.credt.date.format}")
+	@Value("${technical.xml.head.001.apphdr.credt.date.format}")
 	public void setCredtDateFormat(String credtDateFormat) {
 		CREDT_DATE_FORMAT = credtDateFormat;
     }
 	
-	public static JAXBElement<BusinessApplicationHeaderV01> createAppHdr(Calendar cal) {
+	private static String RPTGDT_DATE;
+	@Value("${generic.reporting.date}")
+	public void setRptgDt(String rptgDt) {
+		RPTGDT_DATE = rptgDt;
+    }
+	
+	private static String RPTGDT_DATE_FORMAT;
+	@Value("${technical.xml.auth.072.rpthdr.rptgdt.format}")
+	public void setRptgDtFormat(String rptgDtFormat) {
+		RPTGDT_DATE_FORMAT = rptgDtFormat;
+    }
+	
+	public static JAXBElement<BusinessApplicationHeaderV01> createAppHdr() {
 
 		// appHdr generieren
 		BusinessApplicationHeaderV01 businessApplicationHeaderV01 = objFactory.createBusinessApplicationHeaderV01();
@@ -103,13 +117,13 @@ public class head001_AppHdr {
 		businessApplicationHeaderV01.setTo(toOrgId);
 		
 		// "BizMsgIdr" generieren und dem Header zuweisen
-		businessApplicationHeaderV01.setBizMsgIdr(getBizMsgIdr(cal));
+		businessApplicationHeaderV01.setBizMsgIdr(getBizMsgIdr());
 		
 		// "MsgDefIdr" dem Header zuweisen
 		businessApplicationHeaderV01.setMsgDefIdr(MSG_DEF_IDR);
 
 		// "CreDt" generieren und dem Header zuweisen
-		businessApplicationHeaderV01.setCreDt(getCreDt(cal));
+		businessApplicationHeaderV01.setCreDt(getCreDt());
 		
 		// businessApplicationHeaderV01 dem appHdr zuweisen 
 		appHdr.setValue(businessApplicationHeaderV01);
@@ -117,25 +131,41 @@ public class head001_AppHdr {
 		return appHdr;
 	}
 
-	private static String getBizMsgIdr(Calendar cal) {		
+	// Erstellen des Business Message Identifiers
+	private static String getBizMsgIdr() {		
 		
-		Calendar tmpCal = (Calendar) cal.clone();
+		Date date = null;
+		Calendar cal = Calendar.getInstance();
+		DateFormat format = new SimpleDateFormat(RPTGDT_DATE_FORMAT);
 		
-		// 3 Monate vom jetztigen Datum abziehen
-		tmpCal.add(Calendar.MONTH, -3);
+		// Wenn das Reportdatum im application.properties gesetzt ist, wird dieses verwendet.
+		// Sonst wird das vorhergehende Quartal berechnet.
+		if(RPTGDT_DATE.isEmpty() == false) {			
+			try {
+				date = format.parse(RPTGDT_DATE);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			cal.setTime(date);
+		} else {
+			// 3 Monate vom jetztigen Datum abziehen
+			cal.add(Calendar.MONTH, -3);
 		
-		int quarter = (tmpCal.get(Calendar.MONTH) / 3) + 1;
-		int year = tmpCal.get(Calendar.YEAR);
+		}
+		
+		int quarter = (cal.get(Calendar.MONTH) / 3) + 1;
+		int year = cal.get(Calendar.YEAR);		
 		
 		return FROM_COUNTRY_CODE + "-" + LEI + "-" + year + "-Q" +quarter + "_" + LAUFNUMMER;
 	}
 	
-	private static XMLGregorianCalendar getCreDt(Calendar cal) {
+	private static XMLGregorianCalendar getCreDt() {
 
-		Calendar tmpCal = (Calendar) cal.clone();
+		Calendar cal = XmlWriterService.getCurrentTime();
 		DateFormat format = new SimpleDateFormat(CREDT_DATE_FORMAT);
 				
-		Date date = tmpCal.getTime();
+		Date date = cal.getTime();
 		XMLGregorianCalendar xmlGregorianCalendar = null;
 		try {
 			xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(format.format(date));

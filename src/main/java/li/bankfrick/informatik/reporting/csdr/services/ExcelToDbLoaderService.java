@@ -7,6 +7,9 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,16 +18,17 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-import li.bankfrick.informatik.reporting.csdr.entities.db.excel.CSDRReportingProperty;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.Details_1_1;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.Details_1_2;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_1;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_3;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_4;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ZF_1_5;
-import li.bankfrick.informatik.reporting.csdr.repositories.CSDRReportingProperty_Repository;
+import li.bankfrick.informatik.reporting.csdr.properties.ExcelPatternProperties;
 import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_1_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_2_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_1_Repository;
@@ -32,110 +36,115 @@ import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_3_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_4_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_5_Repository;
 
-@Service
+@Component
+@Configuration
+@EnableConfigurationProperties(ExcelPatternProperties.class)
 public class ExcelToDbLoaderService {
 
 	private static final Logger logger = LogManager.getLogger(ExcelToDbLoaderService.class);
 
-	private static CSDRReportingProperty_Repository PROPERTIES_REPOSITORY;
 	private static Details_1_1_Repository DETAILS_1_1_REPOSITORY;
 	private static Details_1_2_Repository DETAILS_1_2_REPOSITORY;	
 	private static ZF_1_1_Repository ZF_1_1_REPOSITORY;
 	private static ZF_1_3_Repository ZF_1_3_REPOSITORY;
 	private static ZF_1_4_Repository ZF_1_4_REPOSITORY;
 	private static ZF_1_5_Repository ZF_1_5_REPOSITORY;
-
-	public ExcelToDbLoaderService(CSDRReportingProperty_Repository PROPERTIES_REPOSITORY, Details_1_1_Repository DETAILS_1_1_REPOSITORY, Details_1_2_Repository DETAILS_1_2_REPOSITORY, ZF_1_1_Repository ZF_1_1_REPOSITORY, ZF_1_3_Repository ZF_1_3_REPOSITORY, ZF_1_4_Repository ZF_1_4_REPOSITORY, ZF_1_5_Repository ZF_1_5_REPOSITORY) {
-		ExcelToDbLoaderService.PROPERTIES_REPOSITORY = PROPERTIES_REPOSITORY;
+	
+	private static Map<String, String> EXCEL_FILE_PATTERNS;
+	
+	private static String SOURCE_FOLDER;
+	@Value("${generic.source.directory}")
+	public void setSourceFolder(String sourceFolder) {
+		SOURCE_FOLDER = sourceFolder;
+    }
+	
+	private static String PATTERN_1_1;
+	@Value("${technical.excel.pattern.1_1}")
+	public void setPattern_1_1(String pattern_1_1) {
+		PATTERN_1_1 = pattern_1_1;
+    }
+	
+	private static String PATTERN_1_2;
+	@Value("${technical.excel.pattern.1_2}")
+	public void setPattern_1_2(String pattern_1_2) {
+		PATTERN_1_2 = pattern_1_2;
+    }
+	
+	private static String PATTERN_1_3;
+	@Value("${technical.excel.pattern.1_3}")
+	public void setPattern_1_3(String pattern_1_3) {
+		PATTERN_1_3 = pattern_1_3;
+    }
+	
+	private static String PATTERN_1_4;
+	@Value("${technical.excel.pattern.1_4}")
+	public void setPattern_1_4(String pattern_1_4) {
+		PATTERN_1_4 = pattern_1_4;
+    }
+	
+	private static String PATTERN_1_5;
+	@Value("${technical.excel.pattern.1_5}")
+	public void setPattern_1_5(String pattern_1_5) {
+		PATTERN_1_5 = pattern_1_5;
+    }
+	
+	private static String DETAIL_SHEET_1_1;
+	@Value("${technical.excel.1.1.detail.sheet}")
+	public void setDetailSheet_1_1(String detailSheet_1_1) {
+		DETAIL_SHEET_1_1 = detailSheet_1_1;
+    }
+	
+	private static String ZF_SHEET_1_1;
+	@Value("${technical.excel.1.1.zf.sheet}")
+	public void setZfSheet_1_1(String zfSheet_1_1) {
+		ZF_SHEET_1_1 = zfSheet_1_1;
+    }
+	
+	private static String DETAIL_SHEET_1_2;
+	@Value("${technical.excel.1.2.detail.sheet}")
+	public void setDetailSheet_1_2(String detailSheet_1_2) {
+		DETAIL_SHEET_1_2 = detailSheet_1_2;
+    }
+	
+	private static String ZF_SHEET_1_3;
+	@Value("${technical.excel.1.3.zf.sheet}")
+	public void setZfSheet_1_3(String zfSheet_1_3) {
+		ZF_SHEET_1_3 = zfSheet_1_3;
+    }
+	
+	private static String ZF_SHEET_1_4_PROF;
+	@Value("${technical.excel.1.4.zf.prof.sheet}")
+	public void setZfSheet_1_4_Prof(String zfSheet_1_4_Prof) {
+		ZF_SHEET_1_4_PROF = zfSheet_1_4_Prof;
+    }
+	
+	private static String ZF_SHEET_1_4_KLEIN;
+	@Value("${technical.excel.1.4.zf.klein.sheet}")
+	public void setZfSheet_1_4_Klein(String zfSheet_1_4_Klein) {
+		ZF_SHEET_1_4_KLEIN = zfSheet_1_4_Klein;
+    }
+	
+	private static String ZF_SHEET_1_5;
+	@Value("${technical.excel.1.5.zf.sheet}")
+	public void setZfSheet_1_5(String zfSheet_1_5) {
+		ZF_SHEET_1_5 = zfSheet_1_5;
+    }
+	
+	public ExcelToDbLoaderService(Details_1_1_Repository DETAILS_1_1_REPOSITORY, Details_1_2_Repository DETAILS_1_2_REPOSITORY, ZF_1_1_Repository ZF_1_1_REPOSITORY, ZF_1_3_Repository ZF_1_3_REPOSITORY, ZF_1_4_Repository ZF_1_4_REPOSITORY, ZF_1_5_Repository ZF_1_5_REPOSITORY, ExcelPatternProperties EXCEL_PATTERN_PROPERTIES) {
 		ExcelToDbLoaderService.DETAILS_1_1_REPOSITORY = DETAILS_1_1_REPOSITORY;
 		ExcelToDbLoaderService.DETAILS_1_2_REPOSITORY = DETAILS_1_2_REPOSITORY;
 		ExcelToDbLoaderService.ZF_1_1_REPOSITORY = ZF_1_1_REPOSITORY;
 		ExcelToDbLoaderService.ZF_1_3_REPOSITORY = ZF_1_3_REPOSITORY;
 		ExcelToDbLoaderService.ZF_1_4_REPOSITORY = ZF_1_4_REPOSITORY;
 		ExcelToDbLoaderService.ZF_1_5_REPOSITORY = ZF_1_5_REPOSITORY;
-	}
-
-	private static String SOURCE_FOLDER;
-	@Value("${excel.files.source.folder}")
-	public void setSourceFolder(String sourceFolder) {
-		SOURCE_FOLDER = sourceFolder;
-	}
-
-	private static String PATTERN_1_1;
-	@Value("${excel.pattern.1.1.file}")
-	public void setPattern_1_1(String pattern_1_1) {
-		PATTERN_1_1 = pattern_1_1;
-	}
-	
-	private static String PATTERN_1_2;
-	@Value("${excel.pattern.1.2.file}")
-	public void setPattern_1_2(String pattern_1_2) {
-		PATTERN_1_2 = pattern_1_2;
-	}
-
-	private static String PATTERN_1_3;
-	@Value("${excel.pattern.1.3.file}")
-	public void setPattern_1_3(String pattern_1_3) {
-		PATTERN_1_3 = pattern_1_3;
-	}
-	
-	private static String PATTERN_1_4;
-	@Value("${excel.pattern.1.4.file}")
-	public void setPattern_1_4(String pattern_1_4) {
-		PATTERN_1_4 = pattern_1_4;
-	}
-	
-	private static String PATTERN_1_5;
-	@Value("${excel.pattern.1.5.file}")
-	public void setPattern_1_5(String pattern_1_5) {
-		PATTERN_1_5 = pattern_1_5;
-	}
 		
-	private static String DETAIL_SHEET_1_1;
-	@Value("${excel.pattern.1.1.file.details.sheet}")
-	public void setDetailSheet_1_1(String detailSheet_1_1) {
-		DETAIL_SHEET_1_1 = detailSheet_1_1;
-	}
-	
-	private static String ZF_SHEET_1_1;
-	@Value("${excel.pattern.1.1.file.zf.sheet}")
-	public void setZF_1_1(String zf_1_1) {
-		ZF_SHEET_1_1 = zf_1_1;
-	}
-	
-	private static String DETAIL_SHEET_1_2;
-	@Value("${excel.pattern.1.2.file.details.sheet}")
-	public void setDetailSheet_1_2(String detailSheet_1_2) {
-		DETAIL_SHEET_1_2 = detailSheet_1_2;
-	}
-	
-	private static String ZF_SHEET_1_3;
-	@Value("${excel.pattern.1.3.file.zf.sheet}")
-	public void setZF_1_3(String zf_1_3) {
-		ZF_SHEET_1_3 = zf_1_3;
-	}
-	
-	private static String ZF_SHEET_1_4_PROF;
-	@Value("${excel.pattern.1.4.file.zf.prof.sheet}")
-	public void setZF_1_4_Prfssnl(String zf_1_4_Prfssnl) {
-		ZF_SHEET_1_4_PROF = zf_1_4_Prfssnl;
-	}
-	
-	private static String ZF_SHEET_1_4_KLEIN;
-	@Value("${excel.pattern.1.4.file.zf.klein.sheet}")
-	public void setZF_1_4_Rtl(String zf_1_4_Rtl) {
-		ZF_SHEET_1_4_KLEIN = zf_1_4_Rtl;
-	}
-	
-	private static String ZF_SHEET_1_5;
-	@Value("${excel.pattern.1.5.file.zf.sheet}")
-	public void setZF_1_5(String zf_1_5) {
-		ZF_SHEET_1_5 = zf_1_5;
+		ExcelToDbLoaderService.EXCEL_FILE_PATTERNS = EXCEL_PATTERN_PROPERTIES.getPattern();
 	}
 
-	public static void readExcelFiles(File propertyFile) {
+	public static void readExcelFiles() {
 
-		load_Properties(propertyFile);
+		checkExcelFilesPresent();
+		
 		load_Details_1_1();
 		load_Details_1_2();
 		load_ZF_1_1();
@@ -145,41 +154,26 @@ public class ExcelToDbLoaderService {
 		load_ZF_1_5();
 	}
 	
-	private static void load_Properties(File propertyFile) {
+	public static void checkExcelFilesPresent() {
+		
+		logger.debug("Hashmap der Excel File Patterns: " +EXCEL_FILE_PATTERNS);
+		
+		for (Map.Entry<String, String> entry : EXCEL_FILE_PATTERNS.entrySet()) {
+			
+			File[] files = findFilesForId(entry.getValue());
 
-		Workbook workbook;
-		int startingRow = 2;
-		
-		try {
-		workbook = WorkbookFactory.create(propertyFile);
-		Sheet sheet = workbook.getSheet("Properties");
-		
-		// Schleife über alle Reihen in Excel-Sheet
-					Iterator<Row> rows = sheet.rowIterator();
-					while (rows.hasNext ())	{
-						
-						Row currentRow = rows.next();
+			if (files.length != 1) {
+				logger.error("Ungültige Anzahl Dateien für Pattern: " + entry.getValue() + " ; Anzahl gefundene Dateien: "
+						+ files.length + " ; Beende Verarbeitung.");
+				
+				logger.debug(Thread.currentThread().getName());
+				Thread.currentThread().interrupt();
+				
+				logger.debug(Thread.currentThread().isInterrupted());
+				//System.exit(1);
+				return;
 
-						// Die ersten X-Reihen auslassen
-						if(currentRow.getRowNum()<startingRow-1) {
-							continue;
-						}
-						
-						CSDRReportingProperty CSDRReportingProperty = new CSDRReportingProperty();
-						
-						CSDRReportingProperty.setKey(currentRow.getCell(0).getStringCellValue());
-						CSDRReportingProperty.setValue(currentRow.getCell(1).getStringCellValue());
-						
-						PROPERTIES_REPOSITORY.save(CSDRReportingProperty);				
-					}
-					
-					workbook.close();
-					
-					logger.debug("Anzahl Properties in DB: " +PROPERTIES_REPOSITORY.count());
-		
-		} catch (Exception e) {
-			logger.error(e);
-			System.exit(1);
+			}
 		}
 		
 	}
@@ -190,12 +184,8 @@ public class ExcelToDbLoaderService {
 		int startingRow = 2;
 		
 		File[] files = findFilesForId(PATTERN_1_1);
-
-		if (files.length != 1) {
-			logger.error("Ungültige Anzahl Dateien für Pattern: " + PATTERN_1_1 + " ; Anzahl gefundene Dateien: "
-					+ files.length + " ; Beende Verarbeitung.");
-			System.exit(1);
-		}
+		
+		logger.debug("Für Pattern " +PATTERN_1_1 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
@@ -256,12 +246,8 @@ public class ExcelToDbLoaderService {
 		int startingRow = 2;
 
 		File[] files = findFilesForId(PATTERN_1_2);
-
-		if (files.length != 1) {
-			logger.error("Ungültige Anzahl Dateien für Pattern: " + PATTERN_1_2 + " ; Anzahl gefundene Dateien: "
-					+ files.length + " ; Beende Verarbeitung.");
-			System.exit(1);
-		}
+		
+		logger.debug("Für Pattern " +PATTERN_1_2 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
@@ -294,7 +280,7 @@ public class ExcelToDbLoaderService {
 				details_1_2.setKurzbezeichnung((currentRow.getCell(10)).getStringCellValue());
 				BigDecimal titelart = new BigDecimal((currentRow.getCell(11)).getNumericCellValue(), MathContext.DECIMAL64);
 				details_1_2.setTitelart(titelart.intValue());
-				//details_1_2.setLiefercode((currentRow.getCell(12)).getStringCellValue());
+				//TODO: details_1_2.setLiefercode((currentRow.getCell(12)).getStringCellValue());
 				details_1_2.setLiefercode("");
 				BigDecimal systemdatum = new BigDecimal((currentRow.getCell(13)).getNumericCellValue(), MathContext.DECIMAL64);
 				details_1_2.setSystemdatum(systemdatum.toString());
@@ -322,12 +308,8 @@ public class ExcelToDbLoaderService {
 		int startingRow = 2;
 
 		File[] files = findFilesForId(PATTERN_1_1);
-
-		if (files.length != 1) {
-			logger.error("Ungültige Anzahl Dateien für Pattern: " + PATTERN_1_1 + " ; Anzahl gefundene Dateien: "
-					+ files.length + " ; Beende Verarbeitung.");
-			System.exit(1);
-		}
+		
+		logger.debug("Für Pattern " +PATTERN_1_1 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
@@ -377,12 +359,8 @@ public class ExcelToDbLoaderService {
 		int startingRow = 2;
 
 		File[] files = findFilesForId(PATTERN_1_3);
-
-		if (files.length != 1) {
-			logger.error("Ungültige Anzahl Dateien für Pattern: " + PATTERN_1_3 + " ; Anzahl gefundene Dateien: "
-					+ files.length + " ; Beende Verarbeitung.");
-			System.exit(1);
-		}
+		
+		logger.debug("Für Pattern " +PATTERN_1_3 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
@@ -433,12 +411,8 @@ public class ExcelToDbLoaderService {
 		String anlegerTyp = "Prfssnl";
 
 		File[] files = findFilesForId(PATTERN_1_4);
-
-		if (files.length != 1) {
-			logger.error("Ungültige Anzahl Dateien für Pattern: " + PATTERN_1_4 + " ; Anzahl gefundene Dateien: "
-					+ files.length + " ; Beende Verarbeitung.");
-			System.exit(1);
-		}
+		
+		logger.debug("Für Pattern " +PATTERN_1_4 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
@@ -492,12 +466,8 @@ public class ExcelToDbLoaderService {
 		String anlegerTyp = "Rtl";
 
 		File[] files = findFilesForId(PATTERN_1_4);
-
-		if (files.length != 1) {
-			logger.error("Ungültige Anzahl Dateien für Pattern: " + PATTERN_1_4 + " ; Anzahl gefundene Dateien: "
-					+ files.length + " ; Beende Verarbeitung.");
-			System.exit(1);
-		}
+		
+		logger.debug("Für Pattern " +PATTERN_1_4 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
@@ -549,12 +519,8 @@ public class ExcelToDbLoaderService {
 		Workbook workbook;
 
 		File[] files = findFilesForId(PATTERN_1_5);
-
-		if (files.length != 1) {
-			logger.error("Ungültige Anzahl Dateien für Pattern: " + PATTERN_1_5 + " ; Anzahl gefundene Dateien: "
-					+ files.length + " ; Beende Verarbeitung.");
-			System.exit(1);
-		}
+		
+		logger.debug("Für Pattern " +PATTERN_1_5 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
@@ -624,6 +590,11 @@ public class ExcelToDbLoaderService {
 
 	private static File[] findFilesForId(String id) {
 
+		// Ordnername für Excel-Dateien aus Properties lesen, falls Wert in Properties-File leer, wird Root-Ordner angenommen
+		if (SOURCE_FOLDER.isEmpty()) {
+			SOURCE_FOLDER = "./";
+		}
+		
 		File sourceFolderFile = new File(SOURCE_FOLDER);
 
 		return sourceFolderFile.listFiles(new FileFilter() {
@@ -631,6 +602,7 @@ public class ExcelToDbLoaderService {
 				return pathname.getName().contains(id);
 			}
 		});
+		
 	}
 
 }

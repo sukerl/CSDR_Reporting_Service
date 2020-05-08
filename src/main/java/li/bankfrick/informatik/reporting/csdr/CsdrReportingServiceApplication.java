@@ -9,21 +9,35 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import li.bankfrick.informatik.reporting.csdr.services.ExcelToDbLoaderService;
+import li.bankfrick.informatik.reporting.csdr.services.InitialisationService;
 import li.bankfrick.informatik.reporting.csdr.services.XmlWriterService;
 
 @SpringBootApplication
-public class CsdrReportingServiceApplication implements ApplicationRunner {
+@EnableScheduling
+public class CsdrReportingServiceApplication {
 
 	private static final Logger logger = LogManager.getLogger(CsdrReportingServiceApplication.class);
-	
-	File propertyFile;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CsdrReportingServiceApplication.class, args);
 	}
 	
+	@Scheduled(cron = "${technical.application.schedule}")
+	public static void launchApplication() {
+		
+ 		// Einlesen der Excel-Dateien starten
+		ExcelToDbLoaderService.readExcelFiles();
+
+		// XML generieren und in Datei schreiben
+		XmlWriterService.generateXML();
+
+	}
+	/*
 	@Override
     public void run(ApplicationArguments args) throws Exception {
         logger.info("Application started with command-line arguments: {}", Arrays.toString(args.getSourceArgs()));
@@ -63,6 +77,6 @@ public class CsdrReportingServiceApplication implements ApplicationRunner {
 
 		// XML generieren und in Datei schreiben
 		XmlWriterService.generateXML();
-
     }
+    */
 }

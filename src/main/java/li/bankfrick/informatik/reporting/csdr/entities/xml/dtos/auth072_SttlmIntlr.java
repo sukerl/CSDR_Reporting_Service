@@ -62,43 +62,37 @@ public class auth072_SttlmIntlr {
 	private static ObjectFactory objFactory = new ObjectFactory();
 
 	private static String FROM_COUNTRY_CODE;
-
-	@Value("${global.reporting.country}")
+	@Value("${generic.reporting.country}")
 	public void setFromCountryCode(String fromCountryCode) {
 		FROM_COUNTRY_CODE = fromCountryCode;
 	}
 
 	private static String LEI;
-
-	@Value("${global.bank.frick.lei}")
+	@Value("${generic.bank.frick.lei}")
 	public void setLei(String lei) {
 		LEI = lei;
 	}
 
 	private static String RP_NAME;
-
-	@Value("${auth.072.responsible.person.name}")
+	@Value("${generic.responsible.person.name}")
 	public void setRpName(String rpName) {
 		RP_NAME = rpName;
 	}
 
 	private static String RP_PHONE;
-
-	@Value("${auth.072.responsible.person.phone}")
+	@Value("${generic.responsible.person.phone}")
 	public void setRpPhone(String rpPhone) {
 		RP_PHONE = rpPhone;
 	}
 
 	private static String RP_EMAIL;
-
-	@Value("${auth.072.responsible.person.email}")
+	@Value("${generic.responsible.person.email}")
 	public void setRpEmail(String rpEmail) {
 		RP_EMAIL = rpEmail;
 	}
 
 	private static String RP_FUNCTION;
-
-	@Value("${auth.072.responsible.person.function}")
+	@Value("${generic.responsible.person.function}")
 	public void setRpFunction(String rpFunction) {
 		RP_FUNCTION = rpFunction;
 	}

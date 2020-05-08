@@ -1,7 +1,5 @@
 package li.bankfrick.informatik.reporting.csdr.entities.xml.dtos;
 
-import java.util.Calendar;
-
 import javax.xml.bind.JAXBElement;
 
 import li.bankfrick.informatik.reporting.csdr.entities.xml.head003.BusinessApplicationHeaderEnvelope;
@@ -11,7 +9,7 @@ import li.bankfrick.informatik.reporting.csdr.entities.xml.head003.StrictPayload
 
 public class head003_BizData {
 
-	public static JAXBElement<BusinessDataHeaderV01> createBizData(Calendar cal) {
+	public static JAXBElement<BusinessDataHeaderV01> createBizData() {
 
 		// ObjectFactory für xsd:head.003.001.01 initialisieren
 		ObjectFactory objFactory = new ObjectFactory();
@@ -23,11 +21,11 @@ public class head003_BizData {
 		// Application Header erstellen
 		BusinessApplicationHeaderEnvelope businessApplicationHeaderEnvelope = objFactory.createBusinessApplicationHeaderEnvelope();
 		businessDataHeaderV01.setHdr(businessApplicationHeaderEnvelope);
-		businessApplicationHeaderEnvelope.setAny(head001_AppHdr.createAppHdr(cal));
+		businessApplicationHeaderEnvelope.setAny(head001_AppHdr.createAppHdr());
 
 		// Payload erstellen
 		StrictPayload strictPayload = objFactory.createStrictPayload();
-		strictPayload.setAny(auth072_Document.createDocument(cal));
+		strictPayload.setAny(auth072_Document.createDocument());
 		businessDataHeaderV01.setPyld(strictPayload);
 
 		return rootElementBizData;

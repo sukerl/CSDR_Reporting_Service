@@ -1,20 +1,13 @@
 package li.bankfrick.informatik.reporting.csdr;
 
-import java.io.File;
-import java.util.Arrays;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import li.bankfrick.informatik.reporting.csdr.services.ExcelToDbLoaderService;
-import li.bankfrick.informatik.reporting.csdr.services.InitialisationService;
 import li.bankfrick.informatik.reporting.csdr.services.XmlWriterService;
 
 @SpringBootApplication
@@ -30,53 +23,18 @@ public class CsdrReportingServiceApplication {
 	@Scheduled(cron = "${technical.application.schedule}")
 	public static void launchApplication() {
 		
- 		// Einlesen der Excel-Dateien starten
-		ExcelToDbLoaderService.readExcelFiles();
-
-		// XML generieren und in Datei schreiben
-		XmlWriterService.generateXML();
+		logger.info("Verarbeitung beginnt.");
+		
+ 		// Einlesen der Excel-Dateien starten und wenn erfolgreich XML generieren
+		if(ExcelToDbLoaderService.readExcelFiles()) {
+			
+			logger.info("Verarbeitung der Excel-Files erfolgreich abgeschlossen.");
+			
+			// XML generieren und in Datei schreiben
+			XmlWriterService.generateXML();
+		}
+		
+		logger.info("Verarbeitung abgeschlossen.");
 
 	}
-	/*
-	@Override
-    public void run(ApplicationArguments args) throws Exception {
-        logger.info("Application started with command-line arguments: {}", Arrays.toString(args.getSourceArgs()));
-        logger.info("NonOptionArgs: {}", args.getNonOptionArgs());
-        logger.info("OptionNames: {}", args.getOptionNames());
-
-        for (String name : args.getOptionNames()){
-            logger.info("arg-" + name + "=" + args.getOptionValues(name));
-        }
-
-        boolean containsOption = args.containsOption("properties.excel.file");
-        logger.info("Contains properties.excel.file: " + containsOption);
-   
-        // Prüfen ob das Argument das für das Einlesen des Property Files benötigt wird gesetzt wurde, wenn nein versuchen Default-File zu laden
-        if (containsOption) {
-        	String propertyFileName = args.getOptionValues("properties.excel.file").get(0);
-        	propertyFile = new File(propertyFileName);
-        	// Prüfen ob das angegebene Property-File auch tatsächlich existiert, wenn ein, Verarbeitung abbrechen
-        	if (propertyFile.exists()==false) {
-        		logger.error("Die angegebene Property-Datei " +propertyFileName +" konnte nicht gefunden werden.");
-        		System.exit(1);
-        	}
-        	logger.info("Property-Datei " +propertyFile.getName() +" gefunden und wird verwendet.");
-        } else {
-        	logger.warn("Es wurde keine Property-Datei angegeben, versuche die Standard Datei CSDR_Reporting_Properties.xlsx zu laden.");
-        	propertyFile = new File("./CSDR_Reporting_Properties.xlsx");
-        	// Wenn die Standard-Property-Datei auch nciht gefunden wird, Verarbeitung abbrechen.
-        	if (propertyFile.exists()==false) {
-        		logger.error("Die Standard-Property-Datei CSDR_Reporting_Properties.xlsx konnte nicht gefunden werden.");
-        		System.exit(1);
-        	}
-        	logger.info("Die Standard-Property-Datei CSDR_Reporting_Properties.xlsx wurde gefunden und wird verwendet.");
-        }
-        
- 		// Einlesen der Excel-Dateien starten
-		ExcelToDbLoaderService.readExcelFiles(propertyFile);
-
-		// XML generieren und in Datei schreiben
-		XmlWriterService.generateXML();
-    }
-    */
 }

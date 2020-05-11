@@ -1,0 +1,6 @@
+1. WINSW-Software von Github herunterladen (https://github.com/kohsuke/winsw/releases)
+2. Verzeichnis für den service auf Windows Server anlegen und winsw-Executable dorthin kopieren.
+3. winsw-Executable umbenennen auf sinnvollen Namen (z.B. "WinSW.NET4.exe" nach "MiFIDApplication.exe"^)
+4. XML-File mit Konfiguration erstellen (MiFIDApplication.xml)
+5. Als User mit Adminrechten den Befehl "MiFIDApplication.exe install" absetzen.
+6. Den Serviceuser im Service hinterlegen.

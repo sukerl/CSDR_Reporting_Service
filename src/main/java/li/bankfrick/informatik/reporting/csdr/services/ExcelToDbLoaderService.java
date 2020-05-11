@@ -5,11 +5,12 @@ import java.io.FileFilter;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,87 +50,87 @@ public class ExcelToDbLoaderService {
 	private static ZF_1_3_Repository ZF_1_3_REPOSITORY;
 	private static ZF_1_4_Repository ZF_1_4_REPOSITORY;
 	private static ZF_1_5_Repository ZF_1_5_REPOSITORY;
-	
+
 	private static Map<String, String> EXCEL_FILE_PATTERNS;
-	
+
 	private static String SOURCE_FOLDER;
 	@Value("${generic.source.directory}")
 	public void setSourceFolder(String sourceFolder) {
 		SOURCE_FOLDER = sourceFolder;
-    }
-	
+	}
+
 	private static String PATTERN_1_1;
 	@Value("${technical.excel.pattern.1_1}")
 	public void setPattern_1_1(String pattern_1_1) {
 		PATTERN_1_1 = pattern_1_1;
-    }
-	
+	}
+
 	private static String PATTERN_1_2;
 	@Value("${technical.excel.pattern.1_2}")
 	public void setPattern_1_2(String pattern_1_2) {
 		PATTERN_1_2 = pattern_1_2;
-    }
-	
+	}
+
 	private static String PATTERN_1_3;
 	@Value("${technical.excel.pattern.1_3}")
 	public void setPattern_1_3(String pattern_1_3) {
 		PATTERN_1_3 = pattern_1_3;
-    }
-	
+	}
+
 	private static String PATTERN_1_4;
 	@Value("${technical.excel.pattern.1_4}")
 	public void setPattern_1_4(String pattern_1_4) {
 		PATTERN_1_4 = pattern_1_4;
-    }
-	
+	}
+
 	private static String PATTERN_1_5;
 	@Value("${technical.excel.pattern.1_5}")
 	public void setPattern_1_5(String pattern_1_5) {
 		PATTERN_1_5 = pattern_1_5;
-    }
-	
+	}
+
 	private static String DETAIL_SHEET_1_1;
 	@Value("${technical.excel.1.1.detail.sheet}")
 	public void setDetailSheet_1_1(String detailSheet_1_1) {
 		DETAIL_SHEET_1_1 = detailSheet_1_1;
-    }
-	
+	}
+
 	private static String ZF_SHEET_1_1;
 	@Value("${technical.excel.1.1.zf.sheet}")
 	public void setZfSheet_1_1(String zfSheet_1_1) {
 		ZF_SHEET_1_1 = zfSheet_1_1;
-    }
-	
+	}
+
 	private static String DETAIL_SHEET_1_2;
 	@Value("${technical.excel.1.2.detail.sheet}")
 	public void setDetailSheet_1_2(String detailSheet_1_2) {
 		DETAIL_SHEET_1_2 = detailSheet_1_2;
-    }
-	
+	}
+
 	private static String ZF_SHEET_1_3;
 	@Value("${technical.excel.1.3.zf.sheet}")
 	public void setZfSheet_1_3(String zfSheet_1_3) {
 		ZF_SHEET_1_3 = zfSheet_1_3;
-    }
-	
+	}
+
 	private static String ZF_SHEET_1_4_PROF;
 	@Value("${technical.excel.1.4.zf.prof.sheet}")
 	public void setZfSheet_1_4_Prof(String zfSheet_1_4_Prof) {
 		ZF_SHEET_1_4_PROF = zfSheet_1_4_Prof;
-    }
-	
+	}
+
 	private static String ZF_SHEET_1_4_KLEIN;
 	@Value("${technical.excel.1.4.zf.klein.sheet}")
 	public void setZfSheet_1_4_Klein(String zfSheet_1_4_Klein) {
 		ZF_SHEET_1_4_KLEIN = zfSheet_1_4_Klein;
-    }
-	
+	}
+
 	private static String ZF_SHEET_1_5;
 	@Value("${technical.excel.1.5.zf.sheet}")
 	public void setZfSheet_1_5(String zfSheet_1_5) {
 		ZF_SHEET_1_5 = zfSheet_1_5;
-    }
-	
+	}
+
 	public ExcelToDbLoaderService(Details_1_1_Repository DETAILS_1_1_REPOSITORY, Details_1_2_Repository DETAILS_1_2_REPOSITORY, ZF_1_1_Repository ZF_1_1_REPOSITORY, ZF_1_3_Repository ZF_1_3_REPOSITORY, ZF_1_4_Repository ZF_1_4_REPOSITORY, ZF_1_5_Repository ZF_1_5_REPOSITORY, ExcelPatternProperties EXCEL_PATTERN_PROPERTIES) {
 		ExcelToDbLoaderService.DETAILS_1_1_REPOSITORY = DETAILS_1_1_REPOSITORY;
 		ExcelToDbLoaderService.DETAILS_1_2_REPOSITORY = DETAILS_1_2_REPOSITORY;
@@ -137,73 +138,85 @@ public class ExcelToDbLoaderService {
 		ExcelToDbLoaderService.ZF_1_3_REPOSITORY = ZF_1_3_REPOSITORY;
 		ExcelToDbLoaderService.ZF_1_4_REPOSITORY = ZF_1_4_REPOSITORY;
 		ExcelToDbLoaderService.ZF_1_5_REPOSITORY = ZF_1_5_REPOSITORY;
-		
+
 		ExcelToDbLoaderService.EXCEL_FILE_PATTERNS = EXCEL_PATTERN_PROPERTIES.getPattern();
 	}
 
-	public static void readExcelFiles() {
+	// Hauptfunktion zum Einlesen der Excel Dateien
+	public static Boolean readExcelFiles() {
 
-		checkExcelFilesPresent();
-		
-		load_Details_1_1();
-		load_Details_1_2();
-		load_ZF_1_1();
-		load_ZF_1_3();
-		load_ZF_1_4_Prfssnl();
-		load_ZF_1_4_Rtl();
-		load_ZF_1_5();
-	}
-	
-	public static void checkExcelFilesPresent() {
-		
-		logger.debug("Hashmap der Excel File Patterns: " +EXCEL_FILE_PATTERNS);
-		
-		for (Map.Entry<String, String> entry : EXCEL_FILE_PATTERNS.entrySet()) {
+		logger.info("Verarbeitung der Excel-Files beginnt.");
+
+		Boolean excelFilesSuccessful = false;
+
+		// Wenn alle Dateien vorhanden sind, Dateiinhalte in DB einlesen.
+		if(checkExcelFilesPresent()) {
 			
+			load_Details_1_1();
+			load_Details_1_2();
+			load_ZF_1_1();
+			load_ZF_1_3();
+			load_ZF_1_4_Prfssnl();
+			load_ZF_1_4_Rtl();
+			load_ZF_1_5();
+			
+			// Dateien in archive-Ordner verschieben
+			moveFilesToDoneFolder();
+
+			excelFilesSuccessful = true;			
+		}
+		return excelFilesSuccessful;
+	}
+
+	// Funktion die überprüft, ob alle benötigten Dateien für die Verarbeitung vorhanden sind.
+	public static Boolean checkExcelFilesPresent() {
+
+		logger.debug("Hashmap der Excel File Patterns: " +EXCEL_FILE_PATTERNS);
+
+		Boolean allFilesPresent = true;
+
+		for (Map.Entry<String, String> entry : EXCEL_FILE_PATTERNS.entrySet()) {
+
 			File[] files = findFilesForId(entry.getValue());
 
 			if (files.length != 1) {
 				logger.error("Ungültige Anzahl Dateien für Pattern: " + entry.getValue() + " ; Anzahl gefundene Dateien: "
 						+ files.length + " ; Beende Verarbeitung.");
-				
-				logger.debug(Thread.currentThread().getName());
-				Thread.currentThread().interrupt();
-				
-				logger.debug(Thread.currentThread().isInterrupted());
-				//System.exit(1);
-				return;
 
+				allFilesPresent = false;
+				break;
 			}
 		}
-		
+
+		return allFilesPresent;		
 	}
 
 	private static void load_Details_1_1() {
 
 		Workbook workbook;
 		int startingRow = 2;
-		
+
 		File[] files = findFilesForId(PATTERN_1_1);
-		
+
 		logger.debug("Für Pattern " +PATTERN_1_1 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
 			Sheet sheet = workbook.getSheet(DETAIL_SHEET_1_1);
-			
+
 			// Schleife über alle Reihen in Excel-Sheet
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext ())	{
-				
+
 				Row currentRow = rows.next();
 
 				// Die ersten X-Reihen auslassen
 				if(currentRow.getRowNum()<startingRow-1) {
 					continue;
 				}
-				
+
 				Details_1_1 details_1_1 = new Details_1_1();
-				
+
 				details_1_1.setGegenseite((currentRow.getCell(0)).getStringCellValue());
 				details_1_1.setBezeichnungGegenseite((currentRow.getCell(1)).getStringCellValue());
 				details_1_1.setTRC((currentRow.getCell(2)).getStringCellValue());
@@ -226,46 +239,45 @@ public class ExcelToDbLoaderService {
 				details_1_1.setBetragInCHF(betragCHF);
 				BigDecimal betragEUR = new BigDecimal((currentRow.getCell(15)).getNumericCellValue(), MathContext.DECIMAL64);
 				details_1_1.setBetragInEUR(betragEUR.setScale(2, RoundingMode.HALF_UP));
-				
+
 				DETAILS_1_1_REPOSITORY.save(details_1_1);				
 			}
-			
+
 			workbook.close();
-			
+
 			logger.debug("Anzahl " +PATTERN_1_1 +" Detail Datensätze in DB: " +DETAILS_1_1_REPOSITORY.count());
 
 		} catch (Exception e) {
 			logger.error(e);
-			System.exit(1);
 		}
 	}
-	
+
 	private static void load_Details_1_2() {
 
 		Workbook workbook;
 		int startingRow = 2;
 
 		File[] files = findFilesForId(PATTERN_1_2);
-		
+
 		logger.debug("Für Pattern " +PATTERN_1_2 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
 			Sheet sheet = workbook.getSheet(DETAIL_SHEET_1_2);
-			
+
 			// Schleife über alle Reihen in Excel-Sheet
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext ())	{
-				
+
 				Row currentRow = rows.next();
 
 				// Die ersten X-Reihen auslassen
 				if(currentRow.getRowNum()<startingRow-1) {
 					continue;
 				}
-				
+
 				Details_1_2 details_1_2 = new Details_1_2();
-				
+
 				details_1_2.setGegenseite((currentRow.getCell(0)).getStringCellValue());
 				details_1_2.setBezeichnungGegenseite((currentRow.getCell(1)).getStringCellValue());
 				details_1_2.setTRC((currentRow.getCell(2)).getStringCellValue());
@@ -288,46 +300,45 @@ public class ExcelToDbLoaderService {
 				details_1_2.setBetragInCHF(betragCHF);
 				BigDecimal betragEUR = new BigDecimal((currentRow.getCell(15)).getNumericCellValue(), MathContext.DECIMAL64);
 				details_1_2.setBetragInEUR(betragEUR.setScale(2, RoundingMode.HALF_UP));
-				
+
 				DETAILS_1_2_REPOSITORY.save(details_1_2);				
 			}
-			
+
 			workbook.close();
-			
+
 			logger.debug("Anzahl " +PATTERN_1_2 +" Detail Datensätze in DB: " +DETAILS_1_2_REPOSITORY.count());
 
 		} catch (Exception e) {
 			logger.error(e);
-			System.exit(1);
 		}
 	}
-	
+
 	private static void load_ZF_1_1() {
 
 		Workbook workbook;
 		int startingRow = 2;
 
 		File[] files = findFilesForId(PATTERN_1_1);
-		
+
 		logger.debug("Für Pattern " +PATTERN_1_1 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
 			Sheet sheet = workbook.getSheet(ZF_SHEET_1_1);
-			
+
 			// Schleife über alle Reihen in Excel-Sheet
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext ())	{
-				
+
 				Row currentRow = rows.next();
 
 				// Die ersten X-Reihen auslassen
 				if(currentRow.getRowNum()<startingRow-1) {
 					continue;
 				}
-				
+
 				ZF_1_1 zf_1_1 = new ZF_1_1();
-				
+
 				BigDecimal gegenseite = new BigDecimal((currentRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
 				zf_1_1.setGegenseite(gegenseite.intValue());
 				zf_1_1.setBezeichnungGegenseite((currentRow.getCell(1)).getStringCellValue());
@@ -339,46 +350,45 @@ public class ExcelToDbLoaderService {
 				zf_1_1.setGegenwertInCHF(gegenwertCHF.setScale(2, RoundingMode.HALF_UP));
 				BigDecimal gegenwertEUR = new BigDecimal((currentRow.getCell(6)).getNumericCellValue(), MathContext.DECIMAL64);
 				zf_1_1.setGegenwertInEUR(gegenwertEUR.setScale(2, RoundingMode.HALF_UP));
-				
+
 				ZF_1_1_REPOSITORY.save(zf_1_1);				
 			}
-			
+
 			workbook.close();
-			
+
 			logger.debug("Anzahl " +PATTERN_1_1 +" ZF Datensätze in DB: " +ZF_1_1_REPOSITORY.count());
 
 		} catch (Exception e) {
 			logger.error(e);
-			System.exit(1);
 		}
 	}
-	
+
 	private static void load_ZF_1_3() {
 
 		Workbook workbook;
 		int startingRow = 2;
 
 		File[] files = findFilesForId(PATTERN_1_3);
-		
+
 		logger.debug("Für Pattern " +PATTERN_1_3 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
 			Sheet sheet = workbook.getSheet(ZF_SHEET_1_3);
-			
+
 			// Schleife über alle Reihen in Excel-Sheet
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext ())	{
-				
+
 				Row currentRow = rows.next();
 
 				// Die ersten X-Reihen auslassen
 				if(currentRow.getRowNum()<startingRow-1) {
 					continue;
 				}
-				
+
 				ZF_1_3 zf_1_3 = new ZF_1_3();
-				
+
 				BigDecimal gegenseite = new BigDecimal((currentRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
 				zf_1_3.setGegenseite(gegenseite.intValue());
 				zf_1_3.setBezeichnungGegenseite((currentRow.getCell(1)).getStringCellValue());
@@ -390,20 +400,19 @@ public class ExcelToDbLoaderService {
 				zf_1_3.setGegenwertInCHF(gegenwertCHF.setScale(2, RoundingMode.HALF_UP));
 				BigDecimal gegenwertEUR = new BigDecimal((currentRow.getCell(6)).getNumericCellValue(), MathContext.DECIMAL64);
 				zf_1_3.setGegenwertInEUR(gegenwertEUR.setScale(2, RoundingMode.HALF_UP));
-				
+
 				ZF_1_3_REPOSITORY.save(zf_1_3);				
 			}
-			
+
 			workbook.close();
-			
+
 			logger.debug("Anzahl " +PATTERN_1_3 +" ZF Datensätze in DB: " +ZF_1_3_REPOSITORY.count());
 
 		} catch (Exception e) {
 			logger.error(e);
-			System.exit(1);
 		}
 	}
-	
+
 	private static void load_ZF_1_4_Prfssnl() {
 
 		Workbook workbook;
@@ -411,26 +420,26 @@ public class ExcelToDbLoaderService {
 		String anlegerTyp = "Prfssnl";
 
 		File[] files = findFilesForId(PATTERN_1_4);
-		
+
 		logger.debug("Für Pattern " +PATTERN_1_4 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
 			Sheet sheet = workbook.getSheet(ZF_SHEET_1_4_PROF);
-			
+
 			// Schleife über alle Reihen in Excel-Sheet
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext ())	{
-				
+
 				Row currentRow = rows.next();
 
 				// Die ersten X-Reihen auslassen
 				if(currentRow.getRowNum()<startingRow-1) {
 					continue;
 				}
-				
+
 				ZF_1_4 zf_1_4 = new ZF_1_4();
-				
+
 				zf_1_4.setAnlegerTyp(anlegerTyp);
 				BigDecimal gegenseite = new BigDecimal((currentRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
 				zf_1_4.setGegenseite(gegenseite.intValue());
@@ -443,22 +452,21 @@ public class ExcelToDbLoaderService {
 				zf_1_4.setGegenwertInCHF(gegenwertCHF.setScale(2, RoundingMode.HALF_UP));
 				BigDecimal gegenwertEUR = new BigDecimal((currentRow.getCell(6)).getNumericCellValue(), MathContext.DECIMAL64);
 				zf_1_4.setGegenwertInEUR(gegenwertEUR.setScale(2, RoundingMode.HALF_UP));
-				
+
 				ZF_1_4_REPOSITORY.save(zf_1_4);				
 			}
-			
+
 			workbook.close();
-			
+
 			List<ZF_1_4> investorsByType = ZF_1_4_REPOSITORY.findByAnlegerTyp(anlegerTyp);
-			
+
 			logger.debug("Anzahl " +PATTERN_1_4 +" ZF Datensätze vom Typ " +anlegerTyp +" in DB: " +investorsByType.size());
 
 		} catch (Exception e) {
 			logger.error(e);
-			System.exit(1);
 		}
 	}
-	
+
 	private static void load_ZF_1_4_Rtl() {
 
 		Workbook workbook;
@@ -466,26 +474,26 @@ public class ExcelToDbLoaderService {
 		String anlegerTyp = "Rtl";
 
 		File[] files = findFilesForId(PATTERN_1_4);
-		
+
 		logger.debug("Für Pattern " +PATTERN_1_4 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
 			Sheet sheet = workbook.getSheet(ZF_SHEET_1_4_KLEIN);
-			
+
 			// Schleife über alle Reihen in Excel-Sheet
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext ())	{
-				
+
 				Row currentRow = rows.next();
 
 				// Die ersten X-Reihen auslassen
 				if(currentRow.getRowNum()<startingRow-1) {
 					continue;
 				}
-				
+
 				ZF_1_4 zf_1_4 = new ZF_1_4();
-				
+
 				zf_1_4.setAnlegerTyp(anlegerTyp);
 				BigDecimal gegenseite = new BigDecimal((currentRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
 				zf_1_4.setGegenseite(gegenseite.intValue());
@@ -498,37 +506,36 @@ public class ExcelToDbLoaderService {
 				zf_1_4.setGegenwertInCHF(gegenwertCHF.setScale(2, RoundingMode.HALF_UP));
 				BigDecimal gegenwertEUR = new BigDecimal((currentRow.getCell(6)).getNumericCellValue(), MathContext.DECIMAL64);
 				zf_1_4.setGegenwertInEUR(gegenwertEUR.setScale(2, RoundingMode.HALF_UP));
-				
+
 				ZF_1_4_REPOSITORY.save(zf_1_4);				
 			}
-			
+
 			workbook.close();
-			
+
 			List<ZF_1_4> investorsByType = ZF_1_4_REPOSITORY.findByAnlegerTyp(anlegerTyp);
-			
+
 			logger.debug("Anzahl " +PATTERN_1_4 +" ZF Datensätze vom Typ " +anlegerTyp +" in DB: " +investorsByType.size());
 
 		} catch (Exception e) {
 			logger.error(e);
-			System.exit(1);
 		}
 	}
-	
+
 	private static void load_ZF_1_5() {
 
 		Workbook workbook;
 
 		File[] files = findFilesForId(PATTERN_1_5);
-		
+
 		logger.debug("Für Pattern " +PATTERN_1_5 + " wird Datei " +files[0] +" verwendet.");
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
 			Sheet sheet = workbook.getSheet(ZF_SHEET_1_5);
-			
+
 			Row negativeRow = sheet.getRow(1);
 			ZF_1_5 zf_1_5_neg = new ZF_1_5();
-			
+
 			zf_1_5_neg.setUebertragsArt("negativ");
 			BigDecimal anzahlNegTransaktionen = new BigDecimal((negativeRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
 			zf_1_5_neg.setAnzahlTransaktionen(anzahlNegTransaktionen.intValue());
@@ -536,12 +543,12 @@ public class ExcelToDbLoaderService {
 			zf_1_5_neg.setUebertragInCHF(uebertragNegCHF.setScale(2, RoundingMode.HALF_UP));
 			BigDecimal uebertragNegEUR = new BigDecimal((negativeRow.getCell(2)).getNumericCellValue(), MathContext.DECIMAL64);
 			zf_1_5_neg.setUebertragInEUR(uebertragNegEUR.setScale(2, RoundingMode.HALF_UP));
-			
+
 			ZF_1_5_REPOSITORY.save(zf_1_5_neg);
-			
+
 			Row positiveRow = sheet.getRow(4);
 			ZF_1_5 zf_1_5_pos = new ZF_1_5();
-			
+
 			zf_1_5_pos.setUebertragsArt("positiv");
 			BigDecimal anzahlPosTransaktionen = new BigDecimal((positiveRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
 			zf_1_5_pos.setAnzahlTransaktionen(anzahlPosTransaktionen.intValue());
@@ -549,12 +556,12 @@ public class ExcelToDbLoaderService {
 			zf_1_5_pos.setUebertragInCHF(uebertragPosCHF.setScale(2, RoundingMode.HALF_UP));
 			BigDecimal uebertragPosEUR = new BigDecimal((positiveRow.getCell(2)).getNumericCellValue(), MathContext.DECIMAL64);
 			zf_1_5_pos.setUebertragInEUR(uebertragPosEUR.setScale(2, RoundingMode.HALF_UP));
-			
+
 			ZF_1_5_REPOSITORY.save(zf_1_5_pos);
-			
+
 			Row barOutRow = sheet.getRow(9);
 			ZF_1_5 zf_1_5_barout = new ZF_1_5();
-			
+
 			zf_1_5_barout.setUebertragsArt("barbezuege");
 			BigDecimal anzahlBarbezuegeTransaktionen = new BigDecimal((barOutRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
 			zf_1_5_barout.setAnzahlTransaktionen(anzahlBarbezuegeTransaktionen.intValue());
@@ -562,12 +569,12 @@ public class ExcelToDbLoaderService {
 			zf_1_5_barout.setUebertragInCHF(BarbezuegeCHF.setScale(2, RoundingMode.HALF_UP));
 			BigDecimal BarbezuegeEUR = new BigDecimal((barOutRow.getCell(2)).getNumericCellValue(), MathContext.DECIMAL64);
 			zf_1_5_barout.setUebertragInEUR(BarbezuegeEUR.setScale(2, RoundingMode.HALF_UP));
-			
+
 			ZF_1_5_REPOSITORY.save(zf_1_5_barout);
-			
+
 			Row barInRow = sheet.getRow(13);
 			ZF_1_5 zf_1_5_barin = new ZF_1_5();
-			
+
 			zf_1_5_barin.setUebertragsArt("bareinzahlungen");
 			BigDecimal anzahlBareinzahungenTransaktionen = new BigDecimal((barInRow.getCell(0)).getNumericCellValue(), MathContext.DECIMAL64);
 			zf_1_5_barin.setAnzahlTransaktionen(anzahlBareinzahungenTransaktionen.intValue());
@@ -575,16 +582,15 @@ public class ExcelToDbLoaderService {
 			zf_1_5_barin.setUebertragInCHF(BareinzahungenCHF.setScale(2, RoundingMode.HALF_UP));
 			BigDecimal BareinzahungenEUR = new BigDecimal((barInRow.getCell(2)).getNumericCellValue(), MathContext.DECIMAL64);
 			zf_1_5_barin.setUebertragInEUR(BareinzahungenEUR.setScale(2, RoundingMode.HALF_UP));
-			
+
 			ZF_1_5_REPOSITORY.save(zf_1_5_barin);
-			
+
 			workbook.close();
-			
+
 			logger.debug("Anzahl " +PATTERN_1_5 +" ZF Datensätze in DB: " +ZF_1_5_REPOSITORY.count());
 
 		} catch (Exception e) {
 			logger.error(e);
-			System.exit(1);
 		}
 	}
 
@@ -594,15 +600,42 @@ public class ExcelToDbLoaderService {
 		if (SOURCE_FOLDER.isEmpty()) {
 			SOURCE_FOLDER = "./";
 		}
-		
+
+		File[] foundFiles = new File[0];
+
 		File sourceFolderFile = new File(SOURCE_FOLDER);
 
-		return sourceFolderFile.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
-				return pathname.getName().contains(id);
-			}
-		});
-		
+		if (sourceFolderFile.exists()) {
+			foundFiles = sourceFolderFile.listFiles(new FileFilter() {
+				public boolean accept(File pathname) {
+					return pathname.getName().contains(id);
+				}
+			});
+		}
+
+		return foundFiles;
 	}
 
+	// Verarbeitete Dateien in archive-Folder verschieben.
+	private static void moveFilesToDoneFolder() {
+
+		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy-HH.mm.ss");
+		Date date = new Date();
+
+		// archive-Folder besteht aus Originalordner plus "archive" plus aktuellem Zeitstempel
+		File archiveFolder = new File(SOURCE_FOLDER + "/archive" +"/" +dateFormat.format(date));
+
+		// archive-Verzeichnis anlegen, falls es noch nicht existiert.
+		if (! archiveFolder.exists()) {
+			archiveFolder.mkdirs();
+		}
+
+		// Alle Dateien die dem Pattern entsprechen verschieben. Sollten dieseblen sein wie die, die verarbeitet wurden.
+		for (Map.Entry<String, String> entry : EXCEL_FILE_PATTERNS.entrySet()) {
+
+			File[] files = findFilesForId(entry.getValue());
+
+			files[0].renameTo(new File(archiveFolder + "/" +files[0].getName()));
+		}
+	}
 }

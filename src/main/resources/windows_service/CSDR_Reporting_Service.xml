@@ -4,6 +4,6 @@
 	<name>CSDR_Reporting_Service</name>
 	<description>Spring Boot Service für die Erstellung des CSDR Reportings aus XML Dateien</description>
 	<executable>java</executable>
-	<arguments>-Dspring.config.additional-location="E:/TEMP/CSDR/" -Xms256m -Xmx4g -jar "CSDR_Reporting_Service-1.0.jar"</arguments>
+	<arguments>-Dspring.config.additional-location="//bfc.local/dfs/Files/Collaboration/CSDR_Reporting/" -Xms256m -Xmx4g -jar "CSDR_Reporting_Service-1.0.jar"</arguments>
 	<logmode>rotate</logmode>
 </service>

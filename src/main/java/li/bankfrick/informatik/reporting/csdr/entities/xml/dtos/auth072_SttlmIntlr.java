@@ -25,36 +25,25 @@ import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInt
 import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInternaliserFinancialInstrument1;
 import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInternaliserIdentification1;
 import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInternaliserTransactionType1;
-import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_2_Repository;
+import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_4_Repository;
+import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_5_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.FinInstrm_Mapping_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.TxTp_Mapping_Repository;
-import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_1_Repository;
-import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_3_Repository;
-import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_4_Repository;
-import li.bankfrick.informatik.reporting.csdr.repositories.ZF_1_5_Repository;
 
 @Component
 public class auth072_SttlmIntlr {
 
 	private static final Logger logger = LogManager.getLogger(auth072_SttlmIntlr.class);
 
-	private static Details_1_2_Repository DETAILS_1_2_REPOSITORY;
-	private static ZF_1_1_Repository ZF_1_1_REPOSITORY;
-	private static ZF_1_3_Repository ZF_1_3_REPOSITORY;
-	private static ZF_1_4_Repository ZF_1_4_REPOSITORY;
-	private static ZF_1_5_Repository ZF_1_5_REPOSITORY;
+	private static Details_1_4_Repository DETAILS_1_4_REPOSITORY;
+	private static Details_1_5_Repository DETAILS_1_5_REPOSITORY;
 	private static FinInstrm_Mapping_Repository FININSTRM_MAPPING_REPOSITORY;
 	private static TxTp_Mapping_Repository TXTP_MAPPING_REPOSITORY;
 
-	public auth072_SttlmIntlr(Details_1_2_Repository DETAILS_1_2_REPOSITORY, ZF_1_1_Repository ZF_1_1_REPOSITORY,
-			ZF_1_3_Repository ZF_1_3_REPOSITORY, ZF_1_4_Repository ZF_1_4_REPOSITORY,
-			ZF_1_5_Repository ZF_1_5_REPOSITORY, FinInstrm_Mapping_Repository FININSTRM_MAPPING_REPOSITORY,
-			TxTp_Mapping_Repository TXTP_MAPPING_REPOSITORY) {
-		auth072_SttlmIntlr.DETAILS_1_2_REPOSITORY = DETAILS_1_2_REPOSITORY;
-		auth072_SttlmIntlr.ZF_1_1_REPOSITORY = ZF_1_1_REPOSITORY;
-		auth072_SttlmIntlr.ZF_1_3_REPOSITORY = ZF_1_3_REPOSITORY;
-		auth072_SttlmIntlr.ZF_1_4_REPOSITORY = ZF_1_4_REPOSITORY;
-		auth072_SttlmIntlr.ZF_1_5_REPOSITORY = ZF_1_5_REPOSITORY;
+	public auth072_SttlmIntlr(Details_1_4_Repository DETAILS_1_4_REPOSITORY, Details_1_5_Repository DETAILS_1_5_REPOSITORY,
+			FinInstrm_Mapping_Repository FININSTRM_MAPPING_REPOSITORY, TxTp_Mapping_Repository TXTP_MAPPING_REPOSITORY) {
+		auth072_SttlmIntlr.DETAILS_1_4_REPOSITORY = DETAILS_1_4_REPOSITORY;
+		auth072_SttlmIntlr.DETAILS_1_5_REPOSITORY = DETAILS_1_5_REPOSITORY;
 		auth072_SttlmIntlr.FININSTRM_MAPPING_REPOSITORY = FININSTRM_MAPPING_REPOSITORY;
 		auth072_SttlmIntlr.TXTP_MAPPING_REPOSITORY = TXTP_MAPPING_REPOSITORY;
 	}
@@ -145,7 +134,9 @@ public class auth072_SttlmIntlr {
 		logger.debug("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->OvrllTtl generieren.");
 
 		// Das Volume-Value-Pair mit den Daten aus der DB befüllen
-		VolValPair volValPair = ZF_1_1_REPOSITORY.getOvrllTtlVolValPair();
+		VolValPair volValPair = DETAILS_1_4_REPOSITORY.getOvrllTtlVolValPair();
+		
+		logger.trace("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->OvrllTtl: " +volValPair);
 
 		// InternalisationData für ovrllTtl erstellen
 		InternalisationData1 ovrllTtl = createInternalisationData1(volValPair);		
@@ -185,8 +176,10 @@ public class auth072_SttlmIntlr {
 				}
 
 				// Daten aus den entsprechenden Tabellen anhand der Titelarten errechnen.
-				volValPair = DETAILS_1_2_REPOSITORY.getVolValPairByTitelArten(titelArtenIntegerList);
+				volValPair = DETAILS_1_4_REPOSITORY.getVolValPairByTitelArten(titelArtenIntegerList);
 			}
+			
+			logger.trace("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->FinInstrm->" +sI_FI_Type +": " +volValPair);
 
 			InternalisationData1 internalisationData = createInternalisationData1(volValPair);
 
@@ -233,8 +226,10 @@ public class auth072_SttlmIntlr {
 				List<String> trcList = Arrays.asList(trc.split("\\s*,\\s*"));
 
 				// Daten aus den entsprechenden Tabellen anhand der Titelarten errechnen.
-				volValPair = ZF_1_3_REPOSITORY.getTxTpVolValPairByTrc(trcList);
+				volValPair = DETAILS_1_4_REPOSITORY.getTxTpVolValPairByTrc(trcList);
 			}
+			
+			logger.trace("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->TxTp->" +sI_TT_Type +": " +volValPair);
 
 			InternalisationData1 internalisationData = createInternalisationData1(volValPair);
 
@@ -264,14 +259,15 @@ public class auth072_SttlmIntlr {
 		SettlementInternaliserClientType1 clntTp = objFactory.createSettlementInternaliserClientType1();
 
 		// Anlegertypen für "Professionell" und "Retail" aus der DB laden 
-		List<String> anlegerTypen = ZF_1_4_REPOSITORY.getAnlegerTypen();
+		List<String> anlegerTypen = DETAILS_1_4_REPOSITORY.getAnlegerTypen();
 
 		// Für alle Anlagetypen die InternalisationData1 Objekte erzeugen und dem SettlementInternaliserClientType1 Objekt zuweisen
 		for (String anlegerTyp : anlegerTypen) {
 			
 			logger.debug("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->ClntTp->" +anlegerTyp +" generieren");
 
-			VolValPair volValPair = ZF_1_4_REPOSITORY.getClntTpVolValPairByAnlegerTyp(anlegerTyp);
+			VolValPair volValPair = DETAILS_1_4_REPOSITORY.getClntTpVolValPairByAnlegerTyp(anlegerTyp);			
+			logger.trace("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->ClntTp->" +anlegerTyp +": " +volValPair);
 
 			InternalisationData1 internalisationData = createInternalisationData1(volValPair);
 
@@ -300,7 +296,8 @@ public class auth072_SttlmIntlr {
 		logger.debug("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->TtlCshTrf generieren.");
 
 		// Das Volume-Value-Pair mit den Daten aus der DB befüllen
-		VolValPair volValPair = ZF_1_5_REPOSITORY.getTtlCshTrfVolValPair();
+		VolValPair volValPair = DETAILS_1_5_REPOSITORY.getTtlCshTrfVolValPair();
+		logger.trace("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->TtlCshTrf: " +volValPair);
 
 		// InternalisationData für ttlCshTrf erstellen
 		InternalisationData1 ttlCshTrf = createInternalisationData1(volValPair);	

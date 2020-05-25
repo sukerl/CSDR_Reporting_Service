@@ -23,7 +23,8 @@ import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.ObjectFactory
 import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInternaliserClientType1;
 import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInternaliserFinancialInstrument1;
 import li.bankfrick.informatik.reporting.csdr.entities.xml.auth072.SettlementInternaliserTransactionType1;
-import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_1_Repository;
+import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_4_Repository;
+import li.bankfrick.informatik.reporting.csdr.repositories.Details_1_5_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.FinInstrm_Mapping_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.TxTp_Mapping_Repository;
 
@@ -32,13 +33,15 @@ public class auth072_IssrCSDs {
 
 	private static final Logger logger = LogManager.getLogger(auth072_IssrCSDs.class);
 
-	private static Details_1_1_Repository DETAILS_1_1_REPOSITORY;
+	private static Details_1_4_Repository DETAILS_1_4_REPOSITORY;
+	private static Details_1_5_Repository DETAILS_1_5_REPOSITORY;
 	private static FinInstrm_Mapping_Repository FININSTRM_MAPPING_REPOSITORY;
 	private static TxTp_Mapping_Repository TXTP_MAPPING_REPOSITORY;
 
-	public auth072_IssrCSDs(Details_1_1_Repository DETAILS_1_1_REPOSITORY,
+	public auth072_IssrCSDs(Details_1_4_Repository DETAILS_1_4_REPOSITORY, Details_1_5_Repository DETAILS_1_5_REPOSITORY,
 			FinInstrm_Mapping_Repository FININSTRM_MAPPING_REPOSITORY, TxTp_Mapping_Repository TXTP_MAPPING_REPOSITORY) {
-		auth072_IssrCSDs.DETAILS_1_1_REPOSITORY = DETAILS_1_1_REPOSITORY;
+		auth072_IssrCSDs.DETAILS_1_4_REPOSITORY = DETAILS_1_4_REPOSITORY;
+		auth072_IssrCSDs.DETAILS_1_5_REPOSITORY = DETAILS_1_5_REPOSITORY;
 		auth072_IssrCSDs.FININSTRM_MAPPING_REPOSITORY = FININSTRM_MAPPING_REPOSITORY;
 		auth072_IssrCSDs.TXTP_MAPPING_REPOSITORY = TXTP_MAPPING_REPOSITORY;
 	}
@@ -50,7 +53,7 @@ public class auth072_IssrCSDs {
 
 		List<IssuerCSDReport1> issrCSDs = new ArrayList<IssuerCSDReport1>();
 
-		List<String> ISINlands = DETAILS_1_1_REPOSITORY.getDistinctISINland();
+		List<String> ISINlands = DETAILS_1_4_REPOSITORY.getDistinctISINland();
 
 		for (String ISINland : ISINlands) {
 
@@ -84,7 +87,7 @@ public class auth072_IssrCSDs {
 		issrCSDid.setFrstTwoCharsInstrmId(ISINland);
 
 		// LEI Nummer setzen. Wenn keine oder mehrere LEIs zurückgegeben werden, LEI nicht setzen, ist kein Pflichtfeld.
-		List<String> LEIs = DETAILS_1_1_REPOSITORY.getDistinctLEIsByISINland(ISINland);
+		List<String> LEIs = DETAILS_1_4_REPOSITORY.getDistinctLEIsByISINland(ISINland);
 		if (LEIs.size() == 1) {
 			issrCSDid.setLEI(LEIs.get(0));
 		}
@@ -95,7 +98,7 @@ public class auth072_IssrCSDs {
 	// <OvrllTtl> : Die Summen für das Overall Total werden anhand der ISIN aus der DB extrahiert
 	private static InternalisationData1 createOvrllTtl(String ISINland) {
 
-		VolValPair ovrllTtlVolValPair = DETAILS_1_1_REPOSITORY.getVolValPairOvrllTtlByISINland(ISINland);
+		VolValPair ovrllTtlVolValPair = DETAILS_1_4_REPOSITORY.getVolValPairOvrllTtlByISINland(ISINland);
 
 		InternalisationData1 ovrllTtl = createInternalisationData1(ovrllTtlVolValPair);
 
@@ -132,7 +135,7 @@ public class auth072_IssrCSDs {
 				}
 
 				// Daten aus den entsprechenden Tabellen anhand der Titelarten errechnen.
-				volValPair = DETAILS_1_1_REPOSITORY.getVolValPairByTitelArtenAndISINland(titelArtenIntegerList, ISINland);
+				volValPair = DETAILS_1_4_REPOSITORY.getVolValPairByTitelArtenAndISINland(titelArtenIntegerList, ISINland);
 			}
 
 			InternalisationData1 internalisationData = createInternalisationData1(volValPair);
@@ -168,11 +171,22 @@ public class auth072_IssrCSDs {
 			for (TxTp_Mapping txTpMapping : txTpMappings) {
 
 				String sI_TT_Type = txTpMapping.getsI_TT_Type();
+				String trc = txTpMapping.getTrc();
 				
 				logger.debug("auth072 : Document->SttlmIntlrRpt->IssrCSD(" +ISINland +")->TxTp->" +sI_TT_Type +" generieren.");
 
 				// Das Volume-Value-Pair zuerst mit leeren Werten befüllen, falls kein Mapping existiert sind diese Werte immer 0.
 				VolValPair volValPair = new VolValPair(0,new BigDecimal(0));
+				
+				if (trc != null) {
+					// String mit Mappings in Liste umwandeln, wird für JPA-Repository bzw. Hibernate so benötigt. 
+					List<String> trcList = Arrays.asList(trc.split("\\s*,\\s*"));
+
+					// Daten aus den entsprechenden Tabellen anhand der Titelarten errechnen.
+					volValPair = DETAILS_1_4_REPOSITORY.getTxTpVolValPairByTrcAndISINland(trcList, ISINland);
+				}
+				
+				logger.trace("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->TxTp->" +sI_TT_Type +": " +volValPair);
 
 				InternalisationData1 internalisationData = createInternalisationData1(volValPair);
 
@@ -200,18 +214,16 @@ public class auth072_IssrCSDs {
 			logger.debug("auth072 : Document->SttlmIntlrRpt->IssrCSD(" +ISINland +")->ClntTp generieren.");
 
 			SettlementInternaliserClientType1 clntTp = objFactory.createSettlementInternaliserClientType1();
-
-			// Anlegertypen für "Professionell" und "Retail" setzen 
-			List<String> anlegerTypen = new ArrayList<String>();
-			anlegerTypen.add("Prfssnl");
-			anlegerTypen.add("Rtl");
+			
+			// Anlegertypen für "Professionell" und "Retail" aus der DB laden 
+			List<String> anlegerTypen = DETAILS_1_4_REPOSITORY.getAnlegerTypen();
 
 			// Für alle Anlagetypen die InternalisationData1 Objekte erzeugen und dem SettlementInternaliserClientType1 Objekt zuweisen
 			for (String anlegerTyp : anlegerTypen) {
 				
 				logger.debug("auth072 : Document->SttlmIntlrRpt->IssrCSD(" +ISINland +")->ClntTp->" +anlegerTyp +" generieren");
 
-				VolValPair volValPair = new VolValPair(0,new BigDecimal(0));
+				VolValPair volValPair = DETAILS_1_4_REPOSITORY.getClntTpVolValPairByAnlegerTypAndISINland(anlegerTyp, ISINland);
 				
 				InternalisationData1 internalisationData = createInternalisationData1(volValPair);
 
@@ -240,7 +252,8 @@ public class auth072_IssrCSDs {
 			logger.debug("auth072 : Document->SttlmIntlrRpt->IssrCSD(" +ISINland +")->TtlCshTrf generieren.");
 
 			// Das Volume-Value-Pair mit den Daten aus der DB befüllen
-			VolValPair volValPair = new VolValPair(0,new BigDecimal(0));
+			//VolValPair volValPair = new VolValPair(0,new BigDecimal(0));
+			VolValPair volValPair = DETAILS_1_5_REPOSITORY.getTtlCshTrfVolValPairByLand(ISINland);
 
 			// InternalisationData für ttlCshTrf erstellen
 			InternalisationData1 ttlCshTrf = createInternalisationData1(volValPair);	

@@ -9,9 +9,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import li.bankfrick.informatik.reporting.csdr.entities.db.excel.ClntTp_Mapping;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.FinInstrm_Mapping;
 import li.bankfrick.informatik.reporting.csdr.entities.db.excel.TxTp_Mapping;
 import li.bankfrick.informatik.reporting.csdr.properties.MappingProperties;
+import li.bankfrick.informatik.reporting.csdr.repositories.ClntTp_Mapping_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.FinInstrm_Mapping_Repository;
 import li.bankfrick.informatik.reporting.csdr.repositories.TxTp_Mapping_Repository;
 
@@ -23,16 +25,20 @@ public class InitialisationService {
 	
 	private static Map<String, String> FININSTR;
 	private static Map<String, String> TXTYPE;
+	private static Map<String, String> CLITYPE;
 	
 	private static FinInstrm_Mapping_Repository FININSTRM_MAPPING_REPOSITORY;
 	private static TxTp_Mapping_Repository TXTP_MAPPING_REPOSITORY;
+	private static ClntTp_Mapping_Repository CLNTTP_MAPPING_REPOSITORY;
 	
-	public InitialisationService(FinInstrm_Mapping_Repository FININSTRM_MAPPING_REPOSITORY, TxTp_Mapping_Repository TXTP_MAPPING_REPOSITORY, MappingProperties MAPPING_PROPERTIES) {
+	public InitialisationService(FinInstrm_Mapping_Repository FININSTRM_MAPPING_REPOSITORY, TxTp_Mapping_Repository TXTP_MAPPING_REPOSITORY, ClntTp_Mapping_Repository CLNTTP_MAPPING_REPOSITORY, MappingProperties MAPPING_PROPERTIES) {
 		InitialisationService.FININSTRM_MAPPING_REPOSITORY = FININSTRM_MAPPING_REPOSITORY;
 		InitialisationService.TXTP_MAPPING_REPOSITORY = TXTP_MAPPING_REPOSITORY;
+		InitialisationService.CLNTTP_MAPPING_REPOSITORY = CLNTTP_MAPPING_REPOSITORY;
 		
 		InitialisationService.FININSTR = MAPPING_PROPERTIES.getFininstr();
 		InitialisationService.TXTYPE = MAPPING_PROPERTIES.getTxtype();
+		InitialisationService.CLITYPE = MAPPING_PROPERTIES.getClitype();
 	}
 	
 	@PostConstruct
@@ -73,6 +79,19 @@ public class InitialisationService {
 			TXTP_MAPPING_REPOSITORY.save(txTpMapping);			
 		}
 		logger.debug("Anzahl Mappings für Transaktionstypen in DB: " +TXTP_MAPPING_REPOSITORY.count());
+		
+		logger.debug("Hashmap der Kundentypen: " +CLITYPE);
+		
+		// Kundentypen aus Hashmap in DB speichern 
+		for (Map.Entry<String, String> entry : CLITYPE.entrySet()) {
+			
+			ClntTp_Mapping clntTpMapping = new ClntTp_Mapping();
+			clntTpMapping.setClntTpXML(entry.getKey());
+			clntTpMapping.setClntTpXLSX(entry.getValue());
+						
+			CLNTTP_MAPPING_REPOSITORY.save(clntTpMapping);			
+		}
+		logger.debug("Anzahl Mappings für Kundentypen in DB: " +CLNTTP_MAPPING_REPOSITORY.count());
 
 	}
 

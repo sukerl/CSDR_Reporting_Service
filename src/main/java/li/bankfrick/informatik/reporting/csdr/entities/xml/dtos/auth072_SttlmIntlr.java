@@ -290,13 +290,15 @@ public class auth072_SttlmIntlr {
 		return clntTp;
 	}
 
-	// <TtlCshTrf>
+	// <TtlCshTrf>: Die Summe der Barüberträge wird für die Ländercodes ermittelt, die auch bei den Wertschriften verwendet werden.
 	private static InternalisationData1 createTtlCshTrf() {
 		
 		logger.debug("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->TtlCshTrf generieren.");
 
+		List<String> ISINlands = DETAILS_1_4_REPOSITORY.getDistinctISINland();
+		
 		// Das Volume-Value-Pair mit den Daten aus der DB befüllen
-		VolValPair volValPair = DETAILS_1_5_REPOSITORY.getTtlCshTrfVolValPair();
+		VolValPair volValPair = DETAILS_1_5_REPOSITORY.getTtlCshTrfVolValPairByLand(ISINlands);
 		logger.trace("auth072 : Document->SttlmIntlrRpt->SttlmIntlr->TtlCshTrf: " +volValPair);
 
 		// InternalisationData für ttlCshTrf erstellen

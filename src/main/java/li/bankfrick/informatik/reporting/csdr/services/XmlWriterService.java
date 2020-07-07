@@ -68,13 +68,15 @@ public class XmlWriterService {
 	}
 
 	// Momentane Zeit und Datum festlegen. Zeitangaben im XML bauen alle darauf auf.
-	public static final Calendar currentTime = Calendar.getInstance();
+	public static Calendar currentTime = Calendar.getInstance();
 
 	public static void generateXML() {
 
 		logger.info("Generieren der XML-Datei beginnt.");
 
 		try {
+			
+			currentTime = Calendar.getInstance();
 			
 			StringWriter stringWriter = new StringWriter();
 

@@ -87,8 +87,6 @@ public class ExcelToDbLoaderService {
 		// Wenn alle Dateien vorhanden sind, Dateiinhalte in DB einlesen.
 		if(checkExcelFilesPresent()) {
 
-			//load_Details_1_4(PATTERN_1_4, DETAIL_SHEET_1_4_KLEIN, "Kleinsparer");
-			//load_Details_1_4(PATTERN_1_4, DETAIL_SHEET_1_4_PROF, "Professionell");
 			load_Details_1_4();
 			load_Details_1_5();
 
@@ -132,6 +130,9 @@ public class ExcelToDbLoaderService {
 		File[] files = findFilesForId(PATTERN_1_4);
 
 		logger.debug("Für Pattern " +PATTERN_1_4 + " wird Datei " +files[0] +" verwendet.");
+		
+		// DB vor dem Befüllen leeren
+		DETAILS_1_4_REPOSITORY.deleteAll();
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
@@ -205,7 +206,7 @@ public class ExcelToDbLoaderService {
 
 			workbook.close();
 
-			logger.debug("Anzahl " +PATTERN_1_4 +" Detail Datensätze in DB: " +DETAILS_1_4_REPOSITORY.count());
+			logger.info("Anzahl " +PATTERN_1_4 +" Detail Datensätze in DB: " +DETAILS_1_4_REPOSITORY.count());
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -220,6 +221,9 @@ public class ExcelToDbLoaderService {
 		File[] files = findFilesForId(PATTERN_1_5);
 
 		logger.debug("Für Pattern " +PATTERN_1_5 + " wird Datei " +files[0] +" verwendet.");
+		
+		// DB vor dem Befüllen leeren
+		DETAILS_1_5_REPOSITORY.deleteAll();
 
 		try {
 			workbook = WorkbookFactory.create(files[0]);
@@ -273,7 +277,7 @@ public class ExcelToDbLoaderService {
 			}
 			workbook.close();
 
-			logger.debug("Anzahl " +PATTERN_1_5 +" Detail Datensätze in DB: " +DETAILS_1_5_REPOSITORY.count());
+			logger.info("Anzahl " +PATTERN_1_5 +" Detail Datensätze in DB: " +DETAILS_1_5_REPOSITORY.count());
 
 		} catch (Exception e) {
 			logger.error(e);
